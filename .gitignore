@@ -1,0 +1,21 @@
+.git/
+**/.env
+**/.env.local
+**/.venv/
+**/node_modules/
+**/.next/
+**/__pycache__/
+**/*.pyc
+**/events.db
+**/*.sqlite
+**/*.sqlite3
+# Local databases and backups
+**/*.db
+**/*.db-*
+**/*.db.*
+# Temporary review and diagnostic files
+backend/sqlite_warning_trace.txt
+frontend-payment-review.txt
+refund-webhook-review.zip
+refund-webhook-source.txt
+README.before_submission_update.md
