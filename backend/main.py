@@ -399,9 +399,13 @@ def minutes_to_time(value: int) -> str:
     return f"{value // 60:02d}:{value % 60:02d}"
 
 
+
 @app.post(
-    "/events/{event_id}/sessions/{session_id}/recovery"
+    "/events/{event_id}/sessions/{session_id}/recovery",
+    dependencies=[Depends(require_event_owner)],
 )
+
+
 def suggest_recovery(
     event_id: int,
     session_id: int,

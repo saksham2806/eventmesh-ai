@@ -14,6 +14,8 @@ from fastapi import APIRouter, Header, HTTPException, Request
 from checkout_api import PAYPAL_BASE, get_paypal_token
 from ticketing_api import check_organizer, connect_db
 
+from event_ownership import current_organizer_id
+
 load_dotenv(Path(__file__).parent / ".env")
 
 router = APIRouter(tags=["PayPal Webhooks"])
@@ -278,28 +280,64 @@ async def receive_paypal_webhook(request: Request):
 # 5. ORGANIZER EVENT MONITORING
 # ==========================================
 
+
 @router.get("/paypal/webhooks/events")
-def list_webhook_events(
-    x_organizer_key: str | None = Header(default=None)
-):
-    # Temporary development-only authorization
-    check_organizer(x_organizer_key)
+def list_webhook_events(request: Request):
+    # Require a valid organizer login session.
+    organizer_id = current_organizer_id(request)
 
     db = connect_db()
 
     try:
-        events = db.execute("""
+        # Show only webhook events whose PayPal resource ID
+        # can be linked to a reservation owned by this organizer.
+        #
+        # Unmatched webhooks remain hidden from organizers.
+        events = db.execute(
+            """
             SELECT
-                paypal_event_id,
-                event_type,
-                resource_id,
-                processing_state,
-                received_at
-            FROM paypal_webhook_events
-            ORDER BY received_at DESC,
-                     paypal_event_id DESC
+                w.paypal_event_id,
+                w.event_type,
+                w.resource_id,
+                w.processing_state,
+                w.received_at
+            FROM paypal_webhook_events AS w
+            WHERE EXISTS (
+                SELECT 1
+                FROM reservations AS r
+
+                JOIN events AS e
+                    ON e.id = r.event_id
+
+                LEFT JOIN checkout_orders AS co
+                    ON co.reservation_id = r.id
+
+                LEFT JOIN verified_payments AS vp
+                    ON vp.reservation_id = r.id
+
+                LEFT JOIN refund_proposals AS rp
+                    ON rp.reservation_id = r.id
+
+                WHERE e.organizer_id = ?
+                  AND (
+                      co.paypal_order_id = w.resource_id
+
+                      OR vp.paypal_order_id = w.resource_id
+
+                      OR vp.paypal_capture_id = w.resource_id
+
+                      OR rp.capture_id = w.resource_id
+
+                      OR rp.paypal_refund_id = w.resource_id
+                  )
+            )
+            ORDER BY
+                w.received_at DESC,
+                w.paypal_event_id DESC
             LIMIT 50
-        """).fetchall()
+            """,
+            (organizer_id,),
+        ).fetchall()
 
         return [dict(event) for event in events]
 

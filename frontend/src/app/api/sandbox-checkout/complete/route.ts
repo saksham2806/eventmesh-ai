@@ -4,7 +4,7 @@ import {
   CHECKOUT_COOKIE,
   verifyCheckoutSession,
 } from "@/lib/sandboxSession";
-
+import { getTrustedBackendOrigin } from "@/lib/trustedBackend";
 
 
 type PaymentStatus = {
@@ -100,30 +100,19 @@ export async function POST(request: NextRequest) {
     return reply("Checkout session mismatch", 403);
   }
 
-  const backendUrl =
-    process.env.EVENTMESH_BACKEND_URL ||
-    "http://127.0.0.1:8000";
 
-  let base: URL;
+  const backendOrigin = getTrustedBackendOrigin(request);
 
-  try {
-    base = new URL(backendUrl);
-  } catch {
+  if (!backendOrigin) {
     return reply("Invalid backend configuration", 503);
   }
 
-  if (
-    base.protocol !== "http:" ||
-    !["localhost", "127.0.0.1"].includes(base.hostname) ||
-    base.port !== "8000" ||
-    base.pathname !== "/"
-  ) {
-    return reply("Local backend configuration required", 503);
-  }
+
 
   const endpoint =
-    `${base.origin}/checkout/reservations/` +
+    `${backendOrigin}/checkout/reservations/` +
     encodeURIComponent(session.reservationId);
+
 
   try {
 
@@ -134,6 +123,7 @@ export async function POST(request: NextRequest) {
       },
       cache: "no-store",
       signal: AbortSignal.timeout(15000),
+      redirect: "error",
     });
 
 
@@ -167,6 +157,7 @@ export async function POST(request: NextRequest) {
         "x-organizer-key": secret,
         "content-type": "application/json",
         Cookie: organizerCookie,
+        redirect: "error",
       },
       body: "{}",
       cache: "no-store",
@@ -185,6 +176,7 @@ export async function POST(request: NextRequest) {
       headers: {
         "x-organizer-key": secret,
         Cookie: organizerCookie,
+        redirect: "error",
       },
       cache: "no-store",
       signal: AbortSignal.timeout(15000),

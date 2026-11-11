@@ -4,6 +4,7 @@ import {
   CHECKOUT_COOKIE,
   signCheckoutSession,
 } from "@/lib/sandboxSession";
+import { getTrustedBackendOrigin } from "@/lib/trustedBackend";
 
 // Organizer login session cookie.
 const ORGANIZER_COOKIE = "eventmesh_organizer_session";
@@ -43,32 +44,7 @@ function errorResponse(detail: string, status: number) {
 }
 
 // Only use the local FastAPI backend.
-function getBackendOrigin(): string | null {
-  const configured =
-    process.env.EVENTMESH_BACKEND_URL ||
-    "http://127.0.0.1:8000";
 
-  try {
-    const url = new URL(configured);
-
-    if (
-      url.protocol !== "http:" ||
-      !["localhost", "127.0.0.1"].includes(url.hostname) ||
-      url.port !== "8000" ||
-      url.pathname !== "/" ||
-      url.username ||
-      url.password ||
-      url.search ||
-      url.hash
-    ) {
-      return null;
-    }
-
-    return url.origin;
-  } catch {
-    return null;
-  }
-}
 
 // Check the organizer session using FastAPI.
 async function requireOrganizerSession(
@@ -126,8 +102,21 @@ async function bridge(
   method: "GET" | "POST"
 ) {
   // Keep this bridge local-only.
+
+  // Production stays disabled until explicitly approved.
   if (
-    process.env.NODE_ENV === "production" ||
+    process.env.NODE_ENV === "production" &&
+    process.env.EVENTMESH_ENABLE_PRODUCTION_BRIDGE !== "true"
+  ) {
+    return errorResponse(
+      "Production API bridge not enabled",
+      403
+    );
+  }
+
+  // Local development may only run on localhost.
+  if (
+    process.env.NODE_ENV !== "production" &&
     !["localhost", "127.0.0.1"].includes(
       request.nextUrl.hostname
     )
@@ -159,7 +148,7 @@ async function bridge(
     return errorResponse("Invalid request origin", 403);
   }
 
-  const backendOrigin = getBackendOrigin();
+  const backendOrigin = getTrustedBackendOrigin(request);
 
   if (!backendOrigin) {
     return errorResponse(
