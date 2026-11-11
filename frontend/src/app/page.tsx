@@ -10,13 +10,15 @@ import dynamic from "next/dynamic";
 import PayPalReturnNotice from "@/components/PayPalReturnNotice";
 import OrganizerAuthGate from "@/components/OrganizerAuthGate";
 
-const EventMeshAGStudio = dynamic(
-  () => import("@/components/EventMeshAGStudio"),
+
+const EventMeshInsights = dynamic(
+  () => import("@/components/EventMeshInsights"),
   {
     ssr: false,
-    loading: () => <p>Loading AG Studio analytics...</p>,
+    loading: () => <p>Loading event analytics...</p>,
   }
 );
+
 
 type View = "overview" | "schedule" | "incidents" | "tickets" | "insights";
 type Notice = { kind: "error" | "ok"; message: string } | null;
@@ -1144,7 +1146,7 @@ function Home() {
                     <span className="section-kicker">LIVE RESOURCE VIEW / 03</span>
                     <h2>Room timeline</h2>
                   </div>
-                  <span className="subtle-pill">BRYNTUM TRIAL · READ ONLY</span>
+                  <span className="subtle-pill">BRYNTUM COMMUNITY · READ ONLY</span>
                 </div>
 
                 {selectedEvent ? (
@@ -1809,7 +1811,7 @@ function Home() {
                   <span className="subtle-pill">EVENT DATA</span>
                 </div>
 
-                <EventMeshAGStudio
+                <EventMeshInsights
                   key={selectedEvent?.id ?? 0}
                   eventId={selectedEvent?.id ?? 0}
                   events={events}

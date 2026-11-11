@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from "next/server";
-
+import { getTrustedBackendOrigin } from "@/lib/trustedBackend";
 
 const COOKIE = "eventmesh_organizer_session";
 const SESSION_SECONDS = 12 * 60 * 60;
@@ -19,40 +19,11 @@ function reply(detail: string, status: number) {
   );
 }
 
+
 function localBackend(request: NextRequest): string | null {
-  if (
-    process.env.NODE_ENV === "production" ||
-    !["localhost", "127.0.0.1"].includes(
-      request.nextUrl.hostname
-    )
-  ) {
-    return null;
-  }
-
-  try {
-    const url = new URL(
-      process.env.EVENTMESH_BACKEND_URL ||
-      "http://127.0.0.1:8000"
-    );
-
-    if (
-      url.protocol !== "http:" ||
-      !["localhost", "127.0.0.1"].includes(url.hostname) ||
-      url.port !== "8000" ||
-      url.pathname !== "/" ||
-      url.username ||
-      url.password ||
-      url.search ||
-      url.hash
-    ) {
-      return null;
-    }
-
-    return url.origin;
-  } catch {
-    return null;
-  }
+  return getTrustedBackendOrigin(request);
 }
+
 
 
 function sessionHeaders(
@@ -149,7 +120,9 @@ export async function POST(
 
       result.cookies.set(COOKIE, "", {
         httpOnly: true,
-        secure: request.nextUrl.protocol === "https:",
+        secure:
+  process.env.NODE_ENV === "production" ||
+  request.nextUrl.protocol === "https:",
         sameSite: "lax",
         path: "/",
         maxAge: 0,

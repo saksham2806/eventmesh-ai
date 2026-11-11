@@ -92,7 +92,7 @@ This project does not claim live production payment processing.
 - AG Studio analytics integration
 - Bryntum scheduling integration
 
-The Bryntum trial integration may operate in read-only mode.
+The event timeline uses MIT-licensed Bryntum Scheduler Community v8 in read-only mode. Event analytics uses MIT-licensed Recharts instead of AG Studio.
 
 ## Technology Stack
 
