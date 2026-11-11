@@ -1,236 +1,279 @@
-
 # EventMesh AI
 
-### AI-Powered Multi-Agent Event Management Platform
+**Explainable event recovery, organizer-controlled decisions, and PayPal Sandbox payments in one event-operations workspace.**
 
-EventMesh AI is a full-stack event operations platform built for the PayPal AI Hackathon.
+> **PayPal AI Hackathon 2026 submission project**  
+> Status: **Working local demo** · **PayPal Sandbox only** · **Public production deployment not yet enabled**
 
-It helps event organizers manage events, schedules, tickets, payments, and unexpected disruptions from a unified dashboard.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![Next.js](https://img.shields.io/badge/Frontend-Next.js%2016-black)
+![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688)
+![PayPal](https://img.shields.io/badge/Payments-PayPal%20Sandbox-003087)
 
-## The Problem
+**Project repository:** <https://github.com/saksham2806/eventmesh-ai>  
+**Hackathon:** <https://paypalaihackathon.devpost.com/>  
+**Demo video:** **[ADD PUBLIC YOUTUBE VIDEO LINK BEFORE SUBMISSION]**  
+**Hosted demo:** Not published; follow the local setup and walkthrough below.
 
-Managing a large event involves coordinating rooms, speakers, attendees, schedules, and payments.
+## The problem
 
-Unexpected problems such as room unavailability, speaker delays, and scheduling conflicts can disrupt multiple activities.
+Live events are difficult to coordinate. A room can become unavailable, a session can conflict with another booking, or ticket capacity can change while payments are in progress. Organizers often have to switch between scheduling tools, payment systems, and spreadsheets to resolve one incident.
 
-Traditional event management tools often require organizers to resolve these problems manually.
+**EventMesh AI** brings these activities into a single workflow: inspect the schedule, consider ranked recovery options, have an organizer approve a change, manage ticket inventory, and reconcile PayPal Sandbox transactions without treating a payment as successful before the provider confirms it.
 
-## Our Solution
+## What it does
 
-EventMesh AI combines event management with intelligent disruption analysis and human-controlled recovery workflows.
+| Capability | Experience |
+| --- | --- |
+| **Event operations** | Create and view organizer-owned events, rooms, sessions, and ticket types. |
+| **Visual schedule** | Explore the event schedule using Bryntum Scheduler Community. |
+| **Explainable recovery** | Evaluate candidate recovery options for unavailable rooms and scheduling disruptions, with constraint-aware suggestions and explanations. |
+| **Human-in-the-loop decisions** | Preview recovery proposals and explicitly approve changes rather than silently modifying the schedule. |
+| **EventMesh Insights** | Inspect room/session activity, ticket inventory, and operational summaries through Recharts visualizations. |
+| **PayPal Sandbox checkout** | Create PayPal orders, check approval, capture payment, and confirm payment/ticket state through server-side API calls. |
+| **Refund workflow** | Review refund eligibility, create proposals, approve sandbox execution, and inspect reconciliation/tracking. |
+| **Webhook monitoring** | Verify incoming PayPal webhook signatures before recording events, and isolate event history by organizer. |
+| **Organizer accounts** | Login sessions and event-level ownership checks across organizer-facing routes. |
 
-When an incident occurs, organizers can:
+### Example scenario
 
-1. Report the disruption.
-2. Generate AI-assisted recovery recommendations.
-3. Compare alternative rooms and time slots.
-4. Review disruption scores and potential payment impact.
-5. Select a proposed recovery plan.
-6. Approve changes through a controlled workflow.
+1. An organizer creates an event with rooms, sessions, and ticket inventory.
+2. A scheduled room becomes unavailable.
+3. EventMesh AI evaluates alternative room/session arrangements and presents explainable recovery suggestions.
+4. The organizer reviews and approves a proposed change.
+5. A Sandbox reservation is paid using PayPal; the backend checks the provider's order/capture response before issuing tickets.
+6. The organizer can inspect payment status, webhook events, and refund proposals from the application.
 
-## Key Features
+**What is different:** scheduling recovery is linked to the realities of event operations and payment reconciliation, with a deliberate **human-approval step** rather than autonomous, irreversible changes.
 
-### 1. Event Management
+## How AI is used
 
-- Organizer authentication
-- Event creation and management
-- Room registration
-- Session scheduling
-- Schedule conflict detection
-- Event-level ownership controls
+The implemented recovery workflow uses **constraint-aware candidate evaluation and explainable ranking** to support operational decisions. It examines scheduling context, such as unavailable rooms, existing sessions, and proposed alternatives, and returns options for an organizer to review. These recommendations are **decision support**, not automatically executed actions.
 
-### 2. AI Recovery Engine
+The backend example configuration also contains `OPENROUTER_API_KEY` and `OPENROUTER_MODEL` settings for optional model-based integration. **An API-key setting alone does not establish that an LLM is used in the running demo.** If an external model is demonstrated, document its exact provider, model name, code path, input, and output here before submitting.
 
-- Multi-incident analysis
-- Room unavailability handling
-- Speaker delay analysis
-- Alternative scheduling recommendations
-- Disruption scoring
-- Recovery proposal persistence
-- Human approval workflow
-- Conflict and impact assessment
+**AI-model disclosure for the final submission:** **[CONFIRM AND ENTER THE EXACT AI TOOL/MODEL ACTUALLY USED IN THE DEMO]**.
 
-### 3. Ticketing and Reservations
+> Hackathon note: The PayPal AI Hackathon requires a meaningful integration of both the PayPal developer platform **and an AI tool, model, or platform**. Verify and demonstrate the AI integration you actually use; a feature named “AI” or deterministic rules by themselves should not be presented as an unverified LLM integration.
 
-- Ticket category creation
-- Ticket inventory tracking
-- Reservation management
-- Checkout previews
-- Payment status tracking
-- Ticket issuance after verified payment
+## How PayPal is used
 
-### 4. PayPal Sandbox Integration
+The integration is **PayPal REST APIs in Sandbox mode**. It is central to the ticketing/payment workflow, rather than a decorative payment button.
 
-- PayPal Sandbox checkout
-- Payment capture verification
-- Webhook signature verification
-- Payment reconciliation
-- Refund eligibility checks
-- Human-controlled refund proposals
-- Gated Sandbox refund execution
+- **Orders:** Create a PayPal Sandbox order linked to an EventMesh reservation.
+- **Capture:** Confirm approval, submit capture using a `PayPal-Request-Id`, and handle uncertain outcomes conservatively.
+- **Verification:** Compare the returned order ID, reservation reference, capture status, USD amount, and ticket total before fulfilling the reservation.
+- **Idempotency and tickets:** Reconcile previously completed captures and avoid issuing duplicate tickets.
+- **Refunds:** Use a proposal, approval, execution, tracking, and reconciliation flow for Sandbox refunds.
+- **Webhooks:** Verify signed event notifications with PayPal before recording them; organizer-facing history is filtered using payment/reservation ownership.
 
-Payment integrations are tested in PayPal Sandbox.
-This project does not claim live production payment processing.
+**No live payment credentials or real-money transactions are required for the local demonstration.** Use a PayPal **Sandbox business application** and a **Sandbox personal buyer** account.
 
-### 5. Security
+## Technology stack
 
-- Organizer login sessions
-- Password hashing
-- Organizer-specific event access
-- Cross-organizer isolation for tested endpoints
-- Server-side API credentials
-- Protected payment and refund operations
-- Local-only development proxy
+| Layer | Technology |
+| --- | --- |
+| Frontend | Next.js 16, React, TypeScript |
+| Scheduling interface | `@bryntum/scheduler-community`, `@bryntum/scheduler-react-community` |
+| Analytics | Recharts |
+| Backend | Python, FastAPI, Uvicorn, HTTPX |
+| Persistence | SQLite (`backend/events.db` locally; not committed) |
+| Payments | PayPal Sandbox REST APIs and webhook signature verification |
+| Decision support | Constraint-aware, explainable recovery proposals; optional external AI configuration where implemented |
+| Authentication | Organizer sessions with per-event/reservation authorization |
 
-### 6. Monitoring and Analytics
+### Architecture
 
-- Event statistics
-- Room and session timelines
-- Ticket inventory monitoring
-- Payment webhook monitoring
-- Reconciliation status
-- AG Studio analytics integration
-- Bryntum scheduling integration
-
-The event timeline uses MIT-licensed Bryntum Scheduler Community v8 in read-only mode. Event analytics uses MIT-licensed Recharts instead of AG Studio.
-
-## Technology Stack
-
-### Frontend
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
-- AG Studio
-- Bryntum Scheduler
-
-### Backend
-- Python
-- FastAPI
-- SQLite
-- PayPal Sandbox APIs
-
-### Development Tools
-- Git and GitHub
-- VS Code
-- Python unittest
-- PowerShell
-
-## System Architecture
-
-Organizer
+```text
+Organizer browser
     |
     v
-Next.js Frontend
+Next.js dashboard and server-side API routes
+    |  login session + approved API bridge
+    v
+FastAPI backend  ------------------------>  PayPal Sandbox REST API
+    |                                            |
+    v                                            | signed notifications
+SQLite (events, sessions, reservations,           v
+payments, tickets, refund proposals)        FastAPI webhook receiver
     |
     v
-Authenticated API Routes
-    |
-    v
-FastAPI Backend
-    |
-    +-- Organizer Authentication
-    +-- Event Management
-    +-- Scheduling and Conflict Detection
-    +-- AI Recovery and Proposal Management
-    +-- Ticketing and Reservations
-    +-- Payment and Refund Services
-    +-- Webhook Verification and Reconciliation
-    |
-    v
-SQLite Database
+Recovery suggestions, approval, insights, and payment reconciliation
+```
 
-External Integration:
-PayPal Sandbox APIs and Webhooks
+The browser does not need the PayPal client secret. API credentials and the shared backend integration key belong **only** in ignored server-side environment files.
 
-## Running Locally
+## Run the working demo locally
 
-### Backend
+The following setup is designed for judges and reviewers using a development computer. The application is currently intended to be run **locally**, not as an unattended production service.
 
-Open PowerShell:
+### Prerequisites
+
+- **Git**
+- **Node.js 20.9+** and npm (Next.js 16 requirement)
+- **Python 3.11+** and `pip` (the local test environment has also used Python 3.14)
+- A free **PayPal Developer Sandbox** business app and Sandbox buyer account to exercise the complete checkout flow
+- A terminal and browser
+
+### 1. Get the source
 
 ```powershell
-cd D:\eventmesh-ai\backend
+git clone https://github.com/saksham2806/eventmesh-ai.git
+cd eventmesh-ai
+```
 
+### 2. Set up FastAPI (Windows PowerShell)
+
+```powershell
+cd backend
+py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+Copy-Item .env.example .env
+```
+
+Edit **`backend/.env`** and configure the appropriate development values:
+
+```dotenv
+EVENTMESH_ORGANIZER_KEY=REPLACE_WITH_A_LONG_RANDOM_LOCAL_SECRET
+PAYPAL_CLIENT_ID=YOUR_SANDBOX_CLIENT_ID
+PAYPAL_CLIENT_SECRET=YOUR_SANDBOX_CLIENT_SECRET
+PAYPAL_WEBHOOK_ID=
+OPENROUTER_API_KEY=
+OPENROUTER_MODEL=
+EVENTMESH_ENABLE_REGISTRATION=true
+```
+
+- Generate a strong random organizer secret; use the **same value** in the frontend server environment file below.
+- The PayPal client ID and secret come from a **Sandbox** app at <https://developer.paypal.com/dashboard/applications/sandbox>.
+- Set `PAYPAL_WEBHOOK_ID` only if you have configured a real Sandbox webhook subscription. A webhook needs a reachable HTTPS listener; it is not required for the basic local order/capture walkthrough.
+- Leave optional model-related keys empty unless you have verified the corresponding integration.
+- `EVENTMESH_ENABLE_REGISTRATION=true` is for creating **local demo accounts only**. Keep public registration disabled in production.
+- **Never commit `.env`, session cookies, client secrets, buyer credentials, or the SQLite database.**
+
+Start FastAPI in **Terminal 1**, from the `backend` directory:
+
+```powershell
 .\.venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port 8000
 ```
 
-Backend API documentation:
+The API health endpoint should be available at <http://127.0.0.1:8000/health>; interactive API documentation is normally available at <http://127.0.0.1:8000/docs>.
 
-http://127.0.0.1:8000/docs
+**macOS/Linux equivalent:** use `python3 -m venv .venv`, `source .venv/bin/activate`, `python -m pip install -r requirements.txt`, and `python -m uvicorn main:app --host 127.0.0.1 --port 8000`.
 
-### Frontend
+### 3. Set up Next.js
 
-Open another PowerShell terminal:
+In **Terminal 2**, from the repository root:
 
 ```powershell
-cd D:\eventmesh-ai\frontend
+cd frontend
+npm ci
+Copy-Item .env.local.example .env.local
+```
 
+Edit **`frontend/.env.local`**:
+
+```dotenv
+EVENTMESH_BACKEND_URL=http://127.0.0.1:8000
+EVENTMESH_ORGANIZER_KEY=REPLACE_WITH_THE_SAME_LOCAL_SECRET_AS_BACKEND
+```
+
+Run the frontend:
+
+```powershell
 npm run dev -- --webpack
 ```
 
-Frontend:
+Open <http://localhost:3000>. The frontend's server-side routes communicate with the local FastAPI instance; the backend and frontend should both be running.
 
-http://localhost:3000
+### 4. Create a local organizer and explore
 
-Install dependencies from the respective requirements and package files when setting up a new environment. Configure local credentials using the provided example environment files.
+1. Visit <http://localhost:3000/register> and create a demo organizer account (local registration must be enabled as above).
+2. Sign in at <http://localhost:3000/login>.
+3. Create an event; add rooms, sessions, and ticket types.
+4. Inspect the Bryntum Community schedule and EventMesh Insights charts.
+5. Try a recovery preview for a room disruption, review the ranked alternatives, and approve a suitable proposal.
+6. Create a ticket reservation and Sandbox PayPal order. Approve the payment using a **Sandbox buyer**, then check the capture, payment status, and ticket fulfillment results.
+7. Inspect webhook monitoring and refund proposals where corresponding Sandbox records exist.
 
-Never commit real API keys, credentials, or local database files.
+Actual menu labels and available actions depend on the current UI and seeded data. Use **fake attendee details** while demonstrating the workflow.
 
-## Testing
+### 5. Verify the project
 
-The backend regression suite was executed successfully:
+From the **backend** directory:
 
-93 tests passed.
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s . -p "test_*.py"
+```
 
-The following workflows have also been verified during local development:
+From the **frontend** directory:
 
-- Organizer login and logout
-- Cross-organizer isolation for tested routes
-- Event and room loading
-- Session scheduling display
-- AI recovery preview generation
-- PayPal Sandbox payment persistence
-- Verified payment records
-- Issued ticket records
-- Frontend TypeScript checking
+```powershell
+npx tsc --noEmit
+```
 
-A previously tested Sandbox reservation was stored with PAID status, one linked verified payment, and one issued ticket.
+**Most recent local validation during preparation:** 94 backend unit tests passed, the frontend TypeScript check passed, and organizer login/dashboard worked locally. These results are a development checkpoint, not a claim of a completed production security audit or external PayPal integration certification.
 
-## Current Limitations
+## Demo and judging access
 
-- The project is currently designed for local demonstration.
-- Public production deployment has not been security-audited.
-- Production frontend build verification remains incomplete because the development laptop encountered an out-of-memory crash.
-- Real PayPal live payments are not enabled.
-- Refund execution must remain explicitly authorized and restricted to its configured Sandbox workflow.
-- AI suggestions require organizer review and approval.
-- Third-party scheduling components may have trial-license limitations.
+**Current demo method:** reproduce the working app with the instructions above. **A publicly hosted deployment is not required by the hackathon rules** when a working build can be installed and run from the repository.
 
-## Demo Walkthrough
+To test the end-to-end PayPal flow, reviewers need their own free PayPal Sandbox app credentials and Sandbox buyer (or separately arranged judge-only test access). **Do not publish real credentials or session tokens in this README.** If private demo access is arranged, provide the instructions and credentials through an appropriate private channel in the submission process.
 
-1. Sign in as an organizer.
-2. View the main dashboard.
-3. Select an existing event.
-4. View its rooms and session timeline.
-5. Open AI Recovery.
-6. Report room unavailability and speaker delay.
-7. Generate recovery recommendations.
-8. Compare disruption scores and impact analysis.
-9. Demonstrate the approval safeguards without executing unnecessary changes.
-10. Open Tickets & Payments.
-11. Show reservation and payment status.
-12. Open PayPal Webhook Monitoring.
-13. Explain verified Sandbox payment reconciliation and ticket issuance.
+### Suggested video walkthrough (under 3 minutes)
 
-## Project Status
+| Time | What to show |
+| --- | --- |
+| 0:00–0:20 | The problem: an unavailable event room disrupts an active schedule. |
+| 0:20–0:55 | Event dashboard, rooms/sessions, Bryntum Community schedule, and Insights. |
+| 0:55–1:40 | Recovery suggestions, explanations, and organizer approval. |
+| 1:40–2:30 | PayPal Sandbox order approval, capture verification, and ticket status. |
+| 2:30–2:50 | Refund/reconciliation view, security/ownership, and project impact. |
 
-Functional local demonstration with tested backend workflows.
+Record an actual **running application**, use only media you have permission to use, upload the video as **public on YouTube**, and insert its URL near the top of this README and in Devpost.
 
-Production deployment and complete release verification remain future work.
+## Development safeguards and current limitations
 
-## Hackathon
+- **Sandbox only:** This is a hackathon prototype; no live PayPal processing is supported or claimed.
+- **Organizer authorization:** Backend routes use organizer-session and ownership checks. The frontend API bridge also validates sessions and restricts forwarded routes.
+- **Webhooks:** The receiver checks required signature headers and posts the event to PayPal for verification before storing it. Real Sandbox events, not PayPal simulator mock events, are required for that postback verification method.
+- **Duplicate/failure handling:** Capture preparation uses a database transaction and a PayPal idempotency request ID; uncertain outcomes require reconciliation. This reduces risk but is not a blanket guarantee against all network/concurrency failures.
+- **Production bridge:** Production use is **disabled by default** pending secure hosting and environment validation; do not set `EVENTMESH_ENABLE_PRODUCTION_BRIDGE=true` merely to bypass that restriction.
+- **Sandbox completion route:** The Next.js checkout completion endpoint remains local-only.
+- **Signup:** Public production registration is disabled until appropriate safeguards, including rate limiting and account-verification controls, are implemented.
+- **Persistence:** The local SQLite file is ignored by Git. Hosting needs persistent storage, migration/backup planning, and appropriate access restrictions.
+- **Production hardening still required:** HTTPS, trusted-proxy cookie behavior, secret rotation, end-to-end access tests, monitoring, and deployment validation.
 
-Developed for the PayPal AI Hackathon.
+## Repository layout
 
-EventMesh AI demonstrates how AI-assisted operational planning can work alongside secure payment workflows and human decision-making.
+```text
+eventmesh-ai/
+├── backend/                    # FastAPI endpoints, SQLite models, auth, tests
+│   ├── main.py
+│   ├── organizer_auth.py
+│   ├── event_ownership.py
+│   ├── paypal_webhooks.py
+│   ├── paypal_capture.py
+│   ├── ticket_fulfillment.py
+│   └── .env.example
+├── frontend/                   # Next.js organizer dashboard
+│   ├── src/app/
+│   ├── src/components/
+│   │   ├── EventMeshBryntum.tsx
+│   │   └── EventMeshInsights.tsx
+│   └── .env.local.example
+├── docs/
+│   └── THIRD_PARTY_LICENSE_INVENTORY.md
+├── LICENSE
+└── README.md
+```
+
+## Open source and third-party software
+
+EventMesh AI's own contributed code is distributed under the **[MIT License](LICENSE)**, subject to the rights of its respective contributors. The project uses third-party libraries with their **own** license terms.
+
+- **Bryntum Scheduler Community** packages, not the commercial/trial Scheduler packages.
+- **Recharts** for analytics, not the commercial AG Studio/AG Grid Enterprise stack.
+- A dependency-license inventory is available at **[docs/THIRD_PARTY_LICENSE_INVENTORY.md](docs/THIRD_PARTY_LICENSE_INVENTORY.md)**. Verify any additional attribution/notice obligations for redistributed assets and dependencies.
+
+PayPal and other third-party product names are the property of their respective owners. This project is an independent hackathon prototype and does not claim official endorsement.
