@@ -23,12 +23,20 @@ function reply(detail: string, status: number) {
 }
 
 export async function POST(request: NextRequest) {
-  // This endpoint is exclusively for a localhost Sandbox demo.
-  if (
-    process.env.NODE_ENV === "production" ||
-    !["localhost", "127.0.0.1"].includes(
-      request.nextUrl.hostname
-    )
+  // Hosted Sandbox checkout is opt-in, HTTPS-only, and scoped to
+  // the exact configured public origin. It is never a live-money route.
+  if (process.env.NODE_ENV === "production") {
+    const publicOrigin = process.env.EVENTMESH_PUBLIC_FRONTEND_URL;
+    if (
+      process.env.EVENTMESH_ENABLE_PRODUCTION_SANDBOX_CHECKOUT !== "true" ||
+      !publicOrigin ||
+      request.nextUrl.protocol !== "https:" ||
+      request.nextUrl.origin !== publicOrigin.replace(/\/$/, "")
+    ) {
+      return reply("Hosted Sandbox checkout not enabled", 403);
+    }
+  } else if (
+    !["localhost", "127.0.0.1"].includes(request.nextUrl.hostname)
   ) {
     return reply("Local Sandbox route disabled", 403);
   }

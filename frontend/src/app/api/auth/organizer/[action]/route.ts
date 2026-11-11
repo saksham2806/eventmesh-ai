@@ -58,7 +58,9 @@ export async function GET(
       {
         headers: sessionHeaders(request),
         cache: "no-store",
-        signal: AbortSignal.timeout(10000),
+        signal: AbortSignal.timeout(
+          process.env.NODE_ENV === "production" ? 90000 : 10000
+        ),
       }
     );
 
@@ -105,7 +107,9 @@ export async function POST(
           method: "POST",
           headers: sessionHeaders(request),
           cache: "no-store",
-          signal: AbortSignal.timeout(10000),
+          signal: AbortSignal.timeout(
+          process.env.NODE_ENV === "production" ? 90000 : 10000
+        ),
         }
       );
 
@@ -183,7 +187,9 @@ export async function POST(
         },
         body: JSON.stringify({ email, password }),
         cache: "no-store",
-        signal: AbortSignal.timeout(15000),
+        signal: AbortSignal.timeout(
+          process.env.NODE_ENV === "production" ? 90000 : 15000
+        ),
       }
     );
 
@@ -211,7 +217,9 @@ export async function POST(
 
     result.cookies.set(COOKIE, match[1], {
       httpOnly: true,
-      secure: request.nextUrl.protocol === "https:",
+      secure:
+        process.env.NODE_ENV === "production" ||
+        request.nextUrl.protocol === "https:",
       sameSite: "lax",
       path: "/",
       maxAge: SESSION_SECONDS,

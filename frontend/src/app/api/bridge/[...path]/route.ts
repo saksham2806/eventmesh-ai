@@ -67,7 +67,9 @@ async function requireOrganizerSession(
         },
         cache: "no-store",
         redirect: "error",
-        signal: AbortSignal.timeout(10000),
+        signal: AbortSignal.timeout(
+          process.env.NODE_ENV === "production" ? 90000 : 10000
+        ),
       }
     );
 
@@ -218,7 +220,9 @@ if (!organizerToken) {
         body,
         cache: "no-store",
         redirect: "error",
-        signal: AbortSignal.timeout(28000),
+        signal: AbortSignal.timeout(
+          process.env.NODE_ENV === "production" ? 90000 : 28000
+        ),
       }
     );
 

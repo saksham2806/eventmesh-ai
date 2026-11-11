@@ -13,9 +13,7 @@ from event_ownership import require_reservation_owner
 
 router = APIRouter(tags=["Ticket Fulfillment"])
 
-DB_PATH = Path(__file__).parent / "events.db"
-
-
+from db_config import DB_PATH
 def initialize_fulfillment():
     db = connect_db()
 

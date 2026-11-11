@@ -3,8 +3,7 @@ import sqlite3
 from datetime import datetime
 from pathlib import Path
 
-DB_PATH = Path(__file__).parent / "events.db"
-
+from db_config import DB_PATH
 def migrate():
     if not DB_PATH.is_file():
         raise RuntimeError("Database file not found")

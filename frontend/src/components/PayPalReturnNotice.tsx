@@ -186,7 +186,7 @@ export default function PayPalReturnNotice() {
       )}
 
       <p className="hint" style={{ marginTop: 16 }}>
-        Local Sandbox demonstration only. Payment and tickets are
+        Sandbox demonstration only (no real money). Payment and tickets are
         confirmed only after backend verification.
       </p>
     </section>

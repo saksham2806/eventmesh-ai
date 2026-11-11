@@ -5,6 +5,7 @@ import os
 from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
+from urllib.parse import urlsplit
 
 import httpx
 from dotenv import load_dotenv
@@ -18,6 +19,34 @@ load_dotenv(Path(__file__).parent / ".env")
 router = APIRouter(tags=["PayPal Checkout"])
 
 PAYPAL_BASE = "https://api-m.sandbox.paypal.com"
+
+
+def frontend_return_origin() -> str:
+    """Fixed server-configured frontend origin for PayPal Sandbox redirects."""
+    configured = os.environ.get("EVENTMESH_PUBLIC_FRONTEND_URL", "").strip()
+    if not configured:
+        # Hosted checkout must never send a buyer back to localhost.
+        if os.environ.get("RENDER") or os.environ.get("RENDER_SERVICE_ID"):
+            raise HTTPException(
+                503, "Configure EVENTMESH_PUBLIC_FRONTEND_URL for hosted checkout"
+            )
+        return "http://localhost:3000"
+
+    url = urlsplit(configured)
+    if (
+        url.username or url.password or url.query or url.fragment
+        or url.path not in ("", "/") or not url.hostname
+        or url.scheme != "https"
+        or url.hostname in ("localhost", "127.0.0.1")
+        or "." not in url.hostname
+    ):
+        raise HTTPException(503, "Invalid HTTPS frontend return origin")
+    try:
+        if url.port not in (None, 443):
+            raise HTTPException(503, "Invalid HTTPS frontend return origin")
+    except ValueError as exc:
+        raise HTTPException(503, "Invalid HTTPS frontend return origin") from exc
+    return f"https://{url.netloc}"
 
 
 # --------------------------------------
@@ -235,6 +264,7 @@ async def create_paypal_order(reservation_id: str):
     # Network calls happen outside the SQLite transaction.
     try:
         async with httpx.AsyncClient(timeout=20) as client:
+            return_origin = frontend_return_origin()
             token = await get_paypal_token(client)
 
             response = await client.post(
@@ -264,8 +294,8 @@ async def create_paypal_order(reservation_id: str):
                                 "shipping_preference": "NO_SHIPPING",
                                 "landing_page": "LOGIN",
                                 "user_action": "CONTINUE",
-                                "return_url": "http://localhost:3000/?paypal=approved",
-                                "cancel_url": "http://localhost:3000/?paypal=cancelled"
+                                "return_url": f"{return_origin}/?paypal=approved",
+                                "cancel_url": f"{return_origin}/?paypal=cancelled"
                             }
                         }
                     }

@@ -13,8 +13,7 @@ from event_ownership import require_reservation_owner,require_refund_proposal_ow
 
 load_dotenv(Path(__file__).parent / '.env')
 router = APIRouter(tags=['Refund Proposals'])
-DB_PATH = Path(__file__).parent / 'events.db'
-
+from db_config import DB_PATH
 class RefundProposalCreate(BaseModel):
     reservation_id: str = Field(min_length=1, max_length=100)
     reason: str = Field(min_length=5, max_length=250)

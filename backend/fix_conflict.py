@@ -3,8 +3,7 @@ import sqlite3
 from pathlib import Path
 from room_utils import normalize_room
 
-DB_PATH = Path(__file__).parent / "events.db"
-
+from db_config import DB_PATH
 EVENT_ID = 2
 SESSION_ID = 4
 NEW_ROOM = "Hall C"

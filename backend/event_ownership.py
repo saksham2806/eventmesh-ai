@@ -5,9 +5,7 @@ from pathlib import Path
 from fastapi import HTTPException, Request
 from organizer_auth import authenticated_organizer
 
-DB_PATH = Path(__file__).parent / "events.db"
-
-
+from db_config import DB_PATH
 def current_organizer_id(request: Request) -> str:
     organizer = authenticated_organizer(request)
     return organizer["id"]

@@ -77,9 +77,7 @@ def health_check():
 
 
 # Database file location
-DB_PATH = Path(__file__).parent / "events.db"
-
-
+from db_config import DB_PATH
 # Define the information needed to create an event
 class EventCreate(BaseModel):
     title: str = Field(min_length=3, max_length=100)
@@ -101,9 +99,27 @@ def initialize_database():
                 description TEXT,
                 event_date TEXT NOT NULL,
                 venue TEXT NOT NULL,
-                capacity INTEGER NOT NULL
+                capacity INTEGER NOT NULL,
+                organizer_id TEXT REFERENCES organizer_accounts(id)
             )
         """)
+        # Legacy databases may predate organizer ownership. Add only the
+        # column/index here. Existing unowned records must be assigned by
+        # an explicit owner-aware migration; never claim them automatically.
+        columns = {
+            row[1] for row in connection.execute(
+                "PRAGMA table_info(events)"
+            )
+        }
+        if "organizer_id" not in columns:
+            connection.execute(
+                "ALTER TABLE events ADD COLUMN organizer_id TEXT "
+                "REFERENCES organizer_accounts(id)"
+            )
+        connection.execute(
+            "CREATE INDEX IF NOT EXISTS idx_events_organizer_id "
+            "ON events(organizer_id)"
+        )
         connection.commit()
     finally:
         connection.close()

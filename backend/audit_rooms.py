@@ -5,8 +5,7 @@ from itertools import combinations
 
 from room_utils import normalize_room
 
-DB_PATH = Path(__file__).parent / "events.db"
-
+from db_config import DB_PATH
 connection = sqlite3.connect(DB_PATH)
 connection.row_factory = sqlite3.Row
 

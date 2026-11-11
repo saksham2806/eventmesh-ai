@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, type FormEvent } from "react";
 
@@ -63,6 +63,17 @@ export default function RegisterPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    return (
+      <main style={{ maxWidth: 600, margin: "12vh auto", padding: 32, textAlign: "center" }}>
+        <h1>Private organizer demo</h1>
+        <p>Public signup is disabled for this hosted hackathon demonstration.</p>
+        <p>Use the demo organizer credentials provided privately by the project team.</p>
+        <a href="/login">Go to organizer login →</a>
+      </main>
+    );
   }
 
   return (

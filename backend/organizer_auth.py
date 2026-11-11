@@ -15,7 +15,7 @@ from pydantic import BaseModel
 
 router = APIRouter(tags=["Organizer Authentication"])
 
-DB_PATH = Path(__file__).parent / "events.db"
+from db_config import DB_PATH
 COOKIE_NAME = "eventmesh_organizer_session"
 SESSION_SECONDS = 12 * 60 * 60
 
@@ -376,7 +376,35 @@ def organizer_logout(
     return {"authenticated": False}
 
 
+def bootstrap_demo_organizer():
+    """Create one organizer on a NEW database using private server variables.
+
+    Does not overwrite or change an existing account. Safe to rerun at startup.
+    Public registration remains separately disabled by default.
+    """
+    email = os.environ.get("EVENTMESH_BOOTSTRAP_ORGANIZER_EMAIL", "").strip()
+    password = os.environ.get("EVENTMESH_BOOTSTRAP_ORGANIZER_PASSWORD", "")
+    if not email and not password:
+        return
+    if not email or not password:
+        raise RuntimeError(
+            "Both EVENTMESH_BOOTSTRAP_ORGANIZER_EMAIL and "
+            "EVENTMESH_BOOTSTRAP_ORGANIZER_PASSWORD are required"
+        )
+    with closing(connect()) as db:
+        count = db.execute(
+            "SELECT COUNT(*) FROM organizer_accounts"
+        ).fetchone()[0]
+    if count:
+        return
+    try:
+        create_first_organizer(email, password)
+    except ValueError as exc:
+        raise RuntimeError("Invalid demo organizer bootstrap settings") from exc
+
+
 initialize_auth()
+bootstrap_demo_organizer()
 
 
 if __name__ == "__main__":

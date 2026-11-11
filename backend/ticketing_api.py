@@ -17,9 +17,7 @@ load_dotenv(Path(__file__).parent / ".env")
 
 router = APIRouter(tags=["Ticketing"])
 
-DB_PATH = Path(__file__).parent / "events.db"
-
-
+from db_config import DB_PATH
 # =====================================
 # 1. REQUEST MODELS
 # =====================================

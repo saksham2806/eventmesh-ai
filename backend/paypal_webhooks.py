@@ -20,8 +20,7 @@ load_dotenv(Path(__file__).parent / ".env")
 
 router = APIRouter(tags=["PayPal Webhooks"])
 
-DB_PATH = Path(__file__).parent / "events.db"
-
+from db_config import DB_PATH
 RECONCILE_EVENT_TYPES = {
     "PAYMENT.CAPTURE.COMPLETED",
     "PAYMENT.CAPTURE.PENDING",

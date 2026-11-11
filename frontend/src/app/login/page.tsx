@@ -368,6 +368,7 @@ export default function OrganizerLoginPage() {
             </form>
 
 
+{process.env.NODE_ENV !== "production" && (
             <p
               style={{
                 margin: "20px 0 4px",
@@ -388,6 +389,7 @@ export default function OrganizerLoginPage() {
                 Create an organizer account →
               </a>
             </p>
+            )}
 
 
             <div className="em-login-divider">

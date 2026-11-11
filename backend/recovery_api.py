@@ -21,9 +21,7 @@ load_dotenv(Path(__file__).parent / ".env")
 
 router = APIRouter(tags=["Verified Recovery"])
 
-DB_PATH = Path(__file__).parent / "events.db"
-
-
+from db_config import DB_PATH
 class RecoveryRequest(BaseModel):
     unavailable_room: str = Field(min_length=2)
 
