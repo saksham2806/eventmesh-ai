@@ -2,9 +2,11 @@
 export async function waitForBackend(
   signal?: AbortSignal
 ): Promise<void> {
-  const maxAttempts = 18;
+  const maxWaitMs = 180000;
+  const retryDelayMs = 5000;
+  const startedAt = Date.now();
 
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+  while (Date.now() - startedAt < maxWaitMs) {
     if (signal?.aborted) {
       throw new Error("Request cancelled");
     }
@@ -16,7 +18,12 @@ export async function waitForBackend(
       });
 
       if (response.ok) {
-        return;
+        const data = await response.json();
+
+        // Continue only after FastAPI is verified healthy.
+        if (data?.ready === true) {
+          return;
+        }
       }
     } catch {
       if (signal?.aborted) {
@@ -24,14 +31,16 @@ export async function waitForBackend(
       }
     }
 
-    if (attempt < maxAttempts - 1) {
-      await new Promise<void>((resolve) =>
-        setTimeout(resolve, 5000)
-      );
+    if (Date.now() - startedAt >= maxWaitMs) {
+      break;
     }
+
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, retryDelayMs);
+    });
   }
 
   throw new Error(
-    "Server is taking longer than expected. Please try again."
+    "The server could not start. Please try again."
   );
 }
