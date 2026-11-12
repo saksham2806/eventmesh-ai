@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { waitForBackend } from "../../lib/waitForBackend";
 
 export default function OrganizerLoginPage() {
   const [email, setEmail] = useState("");
@@ -9,8 +10,12 @@ export default function OrganizerLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [warmingUp, setWarmingUp] = useState(false);
 
-  async function handleLogin(event: FormEvent<HTMLFormElement>) {
+
+  async function handleLogin(
+    event: FormEvent<HTMLFormElement>
+  ) {
     event.preventDefault();
 
     if (loading) return;
@@ -19,6 +24,12 @@ export default function OrganizerLoginPage() {
     setError("");
 
     try {
+      // Wake FastAPI before attempting login.
+      setWarmingUp(true);
+      await waitForBackend();
+      setWarmingUp(false);
+
+      // Existing login request remains unchanged.
       const response = await fetch(
         "/api/auth/organizer/login",
         {
@@ -49,9 +60,11 @@ export default function OrganizerLoginPage() {
           : "Login failed."
       );
     } finally {
+      setWarmingUp(false);
       setLoading(false);
     }
   }
+
 
   return (
     <main className="em-login">
@@ -356,7 +369,7 @@ export default function OrganizerLoginPage() {
                 {loading ? (
                   <>
                     <span className="em-login-spinner" />
-                    Signing in...
+                    {warmingUp ? "Starting server..." : "Signing in..."}
                   </>
                 ) : (
                   <>
@@ -368,27 +381,27 @@ export default function OrganizerLoginPage() {
             </form>
 
 
-{process.env.NODE_ENV !== "production" && (
-            <p
-              style={{
-                margin: "20px 0 4px",
-                textAlign: "center",
-                color: "#7289a4",
-                fontSize: 13,
-              }}
-            >
-              New to EventMesh AI?{" "}
-              <a
-                href="/register"
+            {process.env.NODE_ENV !== "production" && (
+              <p
                 style={{
-                  color: "#0070e0",
-                  fontWeight: 800,
-                  textDecoration: "none",
+                  margin: "20px 0 4px",
+                  textAlign: "center",
+                  color: "#7289a4",
+                  fontSize: 13,
                 }}
               >
-                Create an organizer account →
-              </a>
-            </p>
+                New to EventMesh AI?{" "}
+                <a
+                  href="/register"
+                  style={{
+                    color: "#0070e0",
+                    fontWeight: 800,
+                    textDecoration: "none",
+                  }}
+                >
+                  Create an organizer account →
+                </a>
+              </p>
             )}
 
 

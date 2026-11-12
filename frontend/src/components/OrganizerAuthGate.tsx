@@ -3,6 +3,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { waitForBackend } from "../lib/waitForBackend";
 
 export default function OrganizerAuthGate({
   children,
@@ -18,32 +19,67 @@ export default function OrganizerAuthGate({
   const [headerTarget, setHeaderTarget] =
     useState<Element | null>(null);
 
+
   useEffect(() => {
     const controller = new AbortController();
 
     async function checkSession() {
       try {
-        const response = await fetch(
-          "/api/auth/organizer/me",
-          {
-            credentials: "same-origin",
-            cache: "no-store",
-            signal: controller.signal,
-          }
-        );
+        // Wait for FastAPI to become available.
+        await waitForBackend(controller.signal);
 
         if (controller.signal.aborted) return;
 
-        if (response.status === 401) {
-          window.location.replace("/login");
-          return;
+        // Retry temporary authentication failures.
+        for (let attempt = 0; attempt < 4; attempt++) {
+          try {
+            const response = await fetch(
+              "/api/auth/organizer/me",
+              {
+                credentials: "same-origin",
+                cache: "no-store",
+                signal: controller.signal,
+              }
+            );
+
+            if (controller.signal.aborted) return;
+
+            // User is not logged in.
+            if (response.status === 401) {
+              window.location.replace("/login");
+              return;
+            }
+
+            // Authentication successful.
+            if (response.ok) {
+              setState("authenticated");
+              return;
+            }
+
+            // Only retry temporary server errors.
+            if (
+              ![429, 500, 502, 503, 504].includes(
+                response.status
+              )
+            ) {
+              setState("error");
+              return;
+            }
+          } catch {
+            if (controller.signal.aborted) return;
+          }
+
+          // Wait 4 seconds before retrying.
+          if (attempt < 3) {
+            await new Promise<void>((resolve) => {
+              setTimeout(resolve, 4000);
+            });
+          }
+
+          if (controller.signal.aborted) return;
         }
 
-        if (!response.ok) {
-          throw new Error("Session check failed");
-        }
-
-        setState("authenticated");
+        setState("error");
       } catch {
         if (!controller.signal.aborted) {
           setState("error");
@@ -55,6 +91,7 @@ export default function OrganizerAuthGate({
 
     return () => controller.abort();
   }, []);
+
 
   // Find the existing dashboard header
   useEffect(() => {
@@ -89,13 +126,19 @@ export default function OrganizerAuthGate({
     }
   }
 
+
   if (state === "checking") {
     return (
       <main style={{ padding: 48, textAlign: "center" }}>
-        Checking organizer session...
+        <h2>Connecting to EventMesh AI...</h2>
+        <p>
+          The server may need a moment to start.
+          Please keep this page open.
+        </p>
       </main>
     );
   }
+
 
   if (state === "error") {
     return (
