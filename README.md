@@ -1,128 +1,216 @@
+<div align="center">
+
 # EventMesh AI
 
-**Explainable event recovery, organizer-controlled decisions, and PayPal Sandbox payments in one event-operations workspace.**
+### Predict. Prevent. Perfect.
 
-> **PayPal AI Hackathon 2026 submission project**  
-> Status: **Working local demo** · **PayPal Sandbox only** · **Render hosted demo is opt-in and must be validated end-to-end**
+**An intelligent event-operations workspace for explainable scheduling recovery, organizer-approved decisions, ticket management, and verified PayPal Sandbox payments.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-![Next.js](https://img.shields.io/badge/Frontend-Next.js%2016-black)
-![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688)
-![PayPal](https://img.shields.io/badge/Payments-PayPal%20Sandbox-003087)
+**PayPal AI Hackathon 2026** · **Next.js + FastAPI + SQLite + PayPal Sandbox**
 
-**Project repository:** <https://github.com/saksham2806/eventmesh-ai>  
-**Hackathon:** <https://paypalaihackathon.devpost.com/>  
-**Demo video:** **[ADD PUBLIC YOUTUBE VIDEO LINK BEFORE SUBMISSION]**  
-**Hosted demo (test deployment):** <https://eventmesh-frontend-a1c5.onrender.com> — not verified for complete checkout or durable data; use the local instructions if unavailable.
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Open_EventMesh-2563eb?style=for-the-badge)](https://eventmesh-frontend-a1c5.onrender.com/)
+[![Video Walkthrough](https://img.shields.io/badge/YouTube-Watch_Demo-ef4444?style=for-the-badge&logo=youtube)](https://youtu.be/cm-nEzB0UDw?si=wlATPqXxb9vd-Gvy)
+[![Source Code](https://img.shields.io/badge/GitHub-Source_Code-181717?style=for-the-badge&logo=github)](https://github.com/saksham2806/eventmesh-ai)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-## The problem
+</div>
 
-Live events are difficult to coordinate. A room can become unavailable, a session can conflict with another booking, or ticket capacity can change while payments are in progress. Organizers often have to switch between scheduling tools, payment systems, and spreadsheets to resolve one incident.
+---
 
-**EventMesh AI** brings these activities into a single workflow: inspect the schedule, consider ranked recovery options, have an organizer approve a change, manage ticket inventory, and reconcile PayPal Sandbox transactions without treating a payment as successful before the provider confirms it.
+## 🔗 Important links
 
-## What it does
-
-| Capability | Experience |
+| Resource | Link |
 | --- | --- |
-| **Event operations** | Create and view organizer-owned events, rooms, sessions, and ticket types. |
-| **Visual schedule** | Explore the event schedule using Bryntum Scheduler Community. |
-| **Explainable recovery** | Evaluate candidate recovery options for unavailable rooms and scheduling disruptions, with constraint-aware suggestions and explanations. |
-| **Human-in-the-loop decisions** | Preview recovery proposals and explicitly approve changes rather than silently modifying the schedule. |
-| **EventMesh Insights** | Inspect room/session activity, ticket inventory, and operational summaries through Recharts visualizations. |
-| **PayPal Sandbox checkout** | Create PayPal orders, check approval, capture payment, and confirm payment/ticket state through server-side API calls. |
-| **Refund workflow** | Review refund eligibility, create proposals, approve sandbox execution, and inspect reconciliation/tracking. |
-| **Webhook monitoring** | Verify incoming PayPal webhook signatures before recording events, and isolate event history by organizer. |
-| **Organizer accounts** | Login sessions and event-level ownership checks across organizer-facing routes. |
+| **Live EventMesh website** | **https://eventmesh-frontend-a1c5.onrender.com/** |
+| **Organizer login** | **https://eventmesh-frontend-a1c5.onrender.com/login** |
+| **YouTube project demo** | **https://youtu.be/cm-nEzB0UDw?si=wlATPqXxb9vd-Gvy** |
+| Source code | https://github.com/saksham2806/eventmesh-ai |
+| FastAPI health check | https://eventmesh-backend.onrender.com/health |
+| Hosted webhook monitoring | https://eventmesh-frontend-a1c5.onrender.com/webhooks |
+| PayPal AI Hackathon | https://paypalaihackathon.devpost.com/ |
+| PayPal Developer Sandbox | https://developer.paypal.com/dashboard/applications/sandbox |
 
-### Example scenario
+> **For reviewers:** Start with the [live website](https://eventmesh-frontend-a1c5.onrender.com/), sign in using the **demo organizer credentials** below, and follow the [guided walkthrough](#-recommended-judge-walkthrough). The YouTube video also demonstrates the project if the hosted environment is being redeployed.
 
-1. An organizer creates an event with rooms, sessions, and ticket inventory.
-2. A scheduled room becomes unavailable.
-3. EventMesh AI evaluates alternative room/session arrangements and presents explainable recovery suggestions.
-4. The organizer reviews and approves a proposed change.
-5. A Sandbox reservation is paid using PayPal; the backend checks the provider's order/capture response before issuing tickets.
-6. The organizer can inspect payment status, webhook events, and refund proposals from the application.
+## 🎬 Video walkthrough
 
-**What is different:** scheduling recovery is linked to the realities of event operations and payment reconciliation, with a deliberate **human-approval step** rather than autonomous, irreversible changes.
+[![Watch the EventMesh AI demonstration on YouTube](https://img.youtube.com/vi/cm-nEzB0UDw/hqdefault.jpg)](https://youtu.be/cm-nEzB0UDw?si=wlATPqXxb9vd-Gvy)
 
-## How AI is used
+**[▶ Watch EventMesh AI — full demo on YouTube](https://youtu.be/cm-nEzB0UDw?si=wlATPqXxb9vd-Gvy)**
 
-The implemented recovery workflow uses **constraint-aware candidate evaluation and explainable ranking** to support operational decisions. It examines scheduling context, such as unavailable rooms, existing sessions, and proposed alternatives, and returns options for an organizer to review. These recommendations are **decision support**, not automatically executed actions.
+---
 
-The backend example configuration also contains `OPENROUTER_API_KEY` and `OPENROUTER_MODEL` settings for optional model-based integration. **An API-key setting alone does not establish that an LLM is used in the running demo.** If an external model is demonstrated, document its exact provider, model name, code path, input, and output here before submitting.
+## 🔑 Demo access — important for hackathon judges
 
-**AI-model disclosure for the final submission:** **[CONFIRM AND ENTER THE EXACT AI TOOL/MODEL ACTUALLY USED IN THE DEMO]**.
+**EventMesh uses one designated organizer account for the hosted judging/demo experience.** Please use the following credentials on the **original live website**:
 
-> Hackathon note: The PayPal AI Hackathon requires a meaningful integration of both the PayPal developer platform **and an AI tool, model, or platform**. Verify and demonstrate the AI integration you actually use; a feature named “AI” or deterministic rules by themselves should not be presented as an unverified LLM integration.
+| Field | Demo credential |
+| --- | --- |
+| **Login page** | **https://eventmesh-frontend-a1c5.onrender.com/login** |
+| **Email** | **`xyz@gmail.com`** |
+| **Password** | **`123456789rud`** |
 
-## How PayPal is used
+**Why are these specific credentials provided?**
 
-The integration is **PayPal REST APIs in Sandbox mode**. It is central to the ticketing/payment workflow, rather than a decorative payment button.
+1. **Reproducible judge access.** Everyone reviewing the hosted project can use the same disposable organizer account without registering a new account.
+2. **SQLite can reset on Render.** The application currently stores its SQLite database on the service's **ephemeral filesystem**. Restarts and redeployments can remove the database, including previously registered organizers.
+3. **Bootstrap account on an empty database.** The FastAPI deployment supports `EVENTMESH_BOOTSTRAP_ORGANIZER_EMAIL` and `EVENTMESH_BOOTSTRAP_ORGANIZER_PASSWORD`. When configured, these values can recreate the designated organizer **if there are no organizer accounts** after database initialization.
+4. **Controlled demo workflow.** Public registration is intended to remain disabled on the hosted production-mode frontend, avoiding reliance on newly created accounts that could disappear after a reset.
+5. **Easy recovery after data loss.** Even when events and reservations disappear, reviewers can sign in again using the designated demo account **provided the Render bootstrap variables are still configured correctly**.
 
-- **Orders:** Create a PayPal Sandbox order linked to an EventMesh reservation.
-- **Capture:** Confirm approval, submit capture using a `PayPal-Request-Id`, and handle uncertain outcomes conservatively.
-- **Verification:** Compare the returned order ID, reservation reference, capture status, USD amount, and ticket total before fulfilling the reservation.
-- **Idempotency and tickets:** Reconcile previously completed captures and avoid issuing duplicate tickets.
-- **Refunds:** Use a proposal, approval, execution, tracking, and reconciliation flow for Sandbox refunds.
-- **Webhooks:** Verify signed event notifications with PayPal before recording them; organizer-facing history is filtered using payment/reservation ownership.
+> [!IMPORTANT]
+> **These credentials are deliberately public for a sandbox hackathon demonstration.** They are **not private, secure production credentials**. Anyone who reads this public README can try to access the demo organizer account and modify demo data. Do not reuse them for personal services, live payments, production deployments, or accounts with real user information. Rotate or disable them after judging. If the hosted database already contains a different organizer, the bootstrap process does not necessarily replace that account.
 
-**No live payment credentials or real-money transactions are required for the local demonstration.** Use a PayPal **Sandbox business application** and a **Sandbox personal buyer** account.
+**Note:** The organizer login is **not** a PayPal buyer login. PayPal checkout testing requires a separate **PayPal Sandbox personal buyer account**, not real PayPal credentials.
 
-## Technology stack
+---
+
+## 🌍 The problem
+
+Running an event is more than creating a calendar. A single room outage, overlapping session, capacity issue, or interrupted payment can trigger a chain of operational problems. Traditional workflows often scatter scheduling, recovery decisions, tickets, and payment reconciliation across separate tools.
+
+**EventMesh AI combines these workflows in one organizer-controlled workspace:** understand a disruption, evaluate alternatives, approve a recovery plan, and verify financial outcomes before issuing tickets.
+
+## 💡 What EventMesh AI does
+
+| Capability | How it helps |
+| --- | --- |
+| **Event management** | Create and manage organizer-owned events, rooms, sessions, and ticket categories. |
+| **Visual scheduling** | Explore sessions and rooms using **Bryntum Scheduler Community**. |
+| **Explainable recovery** | Evaluate and rank feasible alternatives when a room becomes unavailable or a schedule needs adjustment. |
+| **Human-in-the-loop approval** | Show proposed recovery actions and their reasoning before the organizer approves changes. |
+| **Operational insights** | Visualize event activity, scheduling, inventory, and other summaries with **Recharts**. |
+| **Ticket reservations** | Create reservations tied to events and ticket quantities. |
+| **PayPal Sandbox orders and capture** | Create an order, accept Sandbox approval, verify the capture, and issue tickets only when payment is confirmed. |
+| **Refund management** | Support refund proposals, approval, Sandbox execution, and reconciliation. |
+| **Webhook observability** | Verify PayPal webhook signatures and inspect recorded notification events. |
+| **Organizer authorization** | Use login sessions and ownership checks for organizer-facing operations. |
+
+### Example: a disruption-to-resolution workflow
+
+```mermaid
+flowchart TD
+    A[Create an event, rooms and sessions] --> B[An assigned room becomes unavailable]
+    B --> C[Evaluate recovery alternatives]
+    C --> D[Show ranked options and explanations]
+    D --> E{Organizer approves?}
+    E -->|Yes| F[Apply selected schedule change]
+    E -->|No| C
+    F --> G[Create ticket reservation]
+    G --> H[PayPal Sandbox approval]
+    H --> I[Server verifies capture and amount]
+    I --> J{Payment verified?}
+    J -->|Yes| K[Mark paid and issue tickets]
+    J -->|No| L[Keep pending / reconcile safely]
+```
+
+**Why this matters:** EventMesh prioritizes **explainability and organizer control** rather than silently changing an event schedule or treating a PayPal approval screen as proof that a payment was completed.
+
+## 🧠 AI and decision support — transparency
+
+The recovery workflow uses **constraint-aware evaluation and explainable ranking** to propose alternatives for operational disruptions. It considers the available event context and presents recommendations for an organizer to approve. Changes are **not automatically committed solely because the system recommends them**.
+
+The repository also exposes optional `OPENROUTER_API_KEY` and `OPENROUTER_MODEL` configuration variables. **Those variables alone do not prove an external language model is running in the hosted demo.** When an external model is enabled, identify the actual model/provider and demonstrate the input/output in the submission; do not misrepresent deterministic recovery logic as a verified LLM integration.
+
+---
+
+## 🧱 Technology stack
 
 | Layer | Technology |
 | --- | --- |
-| Frontend | Next.js 16, React, TypeScript |
-| Scheduling interface | `@bryntum/scheduler-community`, `@bryntum/scheduler-react-community` |
-| Analytics | Recharts |
-| Backend | Python, FastAPI, Uvicorn, HTTPX |
-| Persistence | SQLite (`backend/events.db` locally; not committed) |
-| Payments | PayPal Sandbox REST APIs and webhook signature verification |
-| Decision support | Constraint-aware, explainable recovery proposals; optional external AI configuration where implemented |
-| Authentication | Organizer sessions with per-event/reservation authorization |
+| Frontend | **Next.js 16, React, TypeScript** |
+| Event scheduling UI | **Bryntum Scheduler Community** and React integration |
+| Charts and insights | **Recharts** |
+| Backend API | **Python, FastAPI, Uvicorn, HTTPX** |
+| Database | **SQLite** (`backend/events.db` by default in local development) |
+| Payment provider | **PayPal REST APIs — Sandbox only** |
+| Webhooks | PayPal webhook signature verification |
+| Authentication | Organizer sessions, server-side credentials, event ownership checks |
+| Hosting | **Render**, separate frontend and backend web services |
+| Optional model integration | Configurable OpenRouter credentials/model, when implemented and enabled |
 
-### Architecture
+### System architecture
 
-```text
-Organizer browser
-    |
-    v
-Next.js dashboard and server-side API routes
-    |  login session + approved API bridge
-    v
-FastAPI backend  ------------------------>  PayPal Sandbox REST API
-    |                                            |
-    v                                            | signed notifications
-SQLite (events, sessions, reservations,           v
-payments, tickets, refund proposals)        FastAPI webhook receiver
-    |
-    v
-Recovery suggestions, approval, insights, and payment reconciliation
+```mermaid
+flowchart LR
+    U[Organizer / Judge] --> N[Next.js UI]
+    N --> R[Next.js authenticated API routes]
+    R --> F[FastAPI backend]
+    F <--> D[(SQLite database)]
+    F <--> P[PayPal Sandbox APIs]
+    P -->|Signed webhook| F
+    F --> E[Recovery, insights, ticket and refund workflows]
 ```
 
-The browser does not need the PayPal client secret. API credentials and the shared backend integration key belong **only** in ignored server-side environment files.
+**Server-side secrets stay on the server.** PayPal client secrets and the shared organizer integration key must never be exposed through `NEXT_PUBLIC_` environment variables or committed into Git.
 
-## Run the working demo locally
+---
 
-The following setup is designed for judges and reviewers using a development computer. The application is currently intended to be run **locally**, not as an unattended production service.
+## ⚠️ Why does our database keep getting cleared?
+
+**Short answer:** This is a limitation of **where SQLite is stored on Render**, not a problem caused by SQLite's query engine or a deliberate deletion by the EventMesh UI.
+
+### What happens
+
+- SQLite stores records in a **file on the backend service's filesystem**. In local development that file is commonly `backend/events.db`.
+- Render web services use an **ephemeral filesystem by default**. Files created or modified at runtime are not guaranteed to survive a **redeployment or instance restart**.
+- On **Render Free**, the service additionally **spins down after 15 minutes without traffic**; that also discards runtime filesystem changes.
+- After the next startup, EventMesh may create a **fresh SQLite database**. The new database starts without previous events, sessions, ticket reservations, capture records, webhook logs, or newly registered organizers.
+- A **bootstrap organizer** can be recreated from Render environment variables **when the database has no organizers**, but **that does not restore event or payment history**.
+
+| Situation | Can the temporary SQLite data disappear? |
+| --- | --- |
+| Running locally, same `events.db` file retained | Normally remains until the file is deleted/replaced |
+| Render Free sleeps from inactivity | **Yes** — local runtime changes are lost |
+| Render redeploys a new version | **Yes**, without persistent storage |
+| Render service restarts or instance is replaced | **Yes**, without persistent storage |
+| Upgrading to Render Starter | **Still possible** — Starter stops inactivity sleep, **not filesystem resets** |
+| Render paid service with persistent disk, correct DB path | Data under the disk mount survives normal restarts/deploys, subject to backups and operational limits |
+
+### Why we intentionally use a fixed demo organizer
+
+Because the project is a **hackathon prototype using temporary SQLite storage**, we chose a single designated demo login instead of asking every judge to create and later lose a new organizer account. Render environment variables survive ordinary application redeployments, so the app can seed the designated organizer again **when the database is empty**. The specified credentials are provided in the [Demo access](#-demo-access--important-for-hackathon-judges) section.
+
+**This is a demonstration convenience, not a permanent authentication or data-persistence solution.** The published password must be rotated after the hackathon.
+
+### How to make data durable in the future
+
+For a deployment that needs permanent event and payment records:
+
+1. Attach a **Render persistent disk** to a **paid backend service**.
+2. Mount it at `/var/data` and set `EVENTMESH_DB_PATH=/var/data/events.db` on **the backend**.
+3. Redeploy, initialize/migrate the schema safely, and verify database read/write permissions.
+4. Maintain backups and test recovery. A persistent disk does **not** retroactively recover records already lost from ephemeral storage.
+5. For a larger multi-instance application, consider migrating to a managed relational database such as PostgreSQL rather than continuing with a single-file SQLite deployment.
+
+See: [Render — Free instance behavior](https://render.com/docs/free) · [Render — Persistent disks](https://render.com/docs/disks) · [Render — Deploys and ephemeral storage](https://render.com/docs/deploys).
+
+> [!WARNING]
+> **Do not use temporary SQLite as a durable payments ledger.** PayPal may retain an order or capture on its side even after Render loses EventMesh's corresponding local reservation record. For this project, payments are **Sandbox-only** and tests should start with a fresh reservation. Do not blindly repeat capture or refund calls after a reset; verify the remote transaction and reconcile it first.
+
+---
+
+## 🚀 Run EventMesh locally
 
 ### Prerequisites
 
-- **Git**
-- **Node.js 20.9+** and npm (Next.js 16 requirement)
-- **Python 3.11+** and `pip` (the local test environment has also used Python 3.14)
-- A free **PayPal Developer Sandbox** business app and Sandbox buyer account to exercise the complete checkout flow
-- A terminal and browser
+- Git
+- **Node.js 20.9+** and npm (Next.js 16)
+- **Python 3.11+** and pip
+- Two terminals (one for FastAPI, one for Next.js)
+- A browser
+- Optional for full payment testing: a [PayPal Sandbox business app and personal buyer account](https://developer.paypal.com/dashboard/applications/sandbox)
 
-### 1. Get the source
+### 1. Clone the repository
 
-```powershell
+```bash
 git clone https://github.com/saksham2806/eventmesh-ai.git
 cd eventmesh-ai
 ```
 
-### 2. Set up FastAPI (Windows PowerShell)
+### 2. Install and configure the FastAPI backend
+
+**Windows PowerShell — Terminal 1:**
 
 ```powershell
 cd backend
@@ -132,38 +220,46 @@ py -3 -m venv .venv
 Copy-Item .env.example .env
 ```
 
-Edit **`backend/.env`** and configure the appropriate development values:
+Edit `backend/.env` (this file stays private):
 
 ```dotenv
-EVENTMESH_ORGANIZER_KEY=REPLACE_WITH_A_LONG_RANDOM_LOCAL_SECRET
+EVENTMESH_ORGANIZER_KEY=YOUR_LONG_RANDOM_SERVER_SECRET
+EVENTMESH_ENABLE_REGISTRATION=true
 PAYPAL_CLIENT_ID=YOUR_SANDBOX_CLIENT_ID
 PAYPAL_CLIENT_SECRET=YOUR_SANDBOX_CLIENT_SECRET
 PAYPAL_WEBHOOK_ID=
 OPENROUTER_API_KEY=
 OPENROUTER_MODEL=
-EVENTMESH_ENABLE_REGISTRATION=true
 ```
 
-- Generate a strong random organizer secret; use the **same value** in the frontend server environment file below.
-- The PayPal client ID and secret come from a **Sandbox** app at <https://developer.paypal.com/dashboard/applications/sandbox>.
-- Set `PAYPAL_WEBHOOK_ID` only if you have configured a real Sandbox webhook subscription. A webhook needs a reachable HTTPS listener; it is not required for the basic local order/capture walkthrough.
-- Leave optional model-related keys empty unless you have verified the corresponding integration.
-- `EVENTMESH_ENABLE_REGISTRATION=true` is for creating **local demo accounts only**. Keep public registration disabled in production.
-- **Never commit `.env`, session cookies, client secrets, buyer credentials, or the SQLite database.**
+- Use **the same** `EVENTMESH_ORGANIZER_KEY` in the frontend configuration.
+- Leave optional PayPal/model keys empty if you are only exploring scheduling; the complete payment flow requires valid **Sandbox** credentials.
+- `EVENTMESH_ENABLE_REGISTRATION=true` is intended for **local development**, not the public hosted service.
+- Do **not** commit `.env`, `.env.local`, `events.db`, API secrets, or session cookies.
 
-Start FastAPI in **Terminal 1**, from the `backend` directory:
+Start the API:
 
 ```powershell
 .\.venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port 8000
 ```
 
-The API health endpoint should be available at <http://127.0.0.1:8000/health>; interactive API documentation is normally available at <http://127.0.0.1:8000/docs>.
+Check: **http://127.0.0.1:8000/health** and (where enabled) **http://127.0.0.1:8000/docs**.
 
-**macOS/Linux equivalent:** use `python3 -m venv .venv`, `source .venv/bin/activate`, `python -m pip install -r requirements.txt`, and `python -m uvicorn main:app --host 127.0.0.1 --port 8000`.
+**macOS/Linux alternative:**
 
-### 3. Set up Next.js
+```bash
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+cp .env.example .env
+# Edit .env before continuing
+python -m uvicorn main:app --host 127.0.0.1 --port 8000
+```
 
-In **Terminal 2**, from the repository root:
+### 3. Install and configure Next.js
+
+Open **Terminal 2** at the repository root:
 
 ```powershell
 cd frontend
@@ -171,163 +267,270 @@ npm ci
 Copy-Item .env.local.example .env.local
 ```
 
-Edit **`frontend/.env.local`**:
+Edit `frontend/.env.local`:
 
 ```dotenv
 EVENTMESH_BACKEND_URL=http://127.0.0.1:8000
-EVENTMESH_ORGANIZER_KEY=REPLACE_WITH_THE_SAME_LOCAL_SECRET_AS_BACKEND
+EVENTMESH_ORGANIZER_KEY=YOUR_LONG_RANDOM_SERVER_SECRET
 ```
 
-Run the frontend:
+Start the frontend:
 
 ```powershell
 npm run dev -- --webpack
 ```
 
-Open <http://localhost:3000>. The frontend's server-side routes communicate with the local FastAPI instance; the backend and frontend should both be running.
+Open **http://localhost:3000**.
 
-### Fresh-database and legacy ownership notes
-
-New clones using this version create `events.organizer_id` automatically, so event creation does not require a manual migration on a new database. **For an older SQLite database containing events without owners**, back it up and use `python migrate_event_ownership.py` only after creating the first organizer. That script deliberately requires **exactly one** account and assigns older unowned events to it. Do not run it to infer ownership in a multi-organizer database. Stop FastAPI before executing it.
+> If `npm ci` fails because of a dependency lockfile/platform mismatch, inspect the error and dependency versions before using `npm install`. Do not commit a changed lockfile accidentally.
 
 ### 4. Create a local organizer and explore
 
-1. Visit <http://localhost:3000/register> and create a demo organizer account (local registration must be enabled as above).
-2. Sign in at <http://localhost:3000/login>.
-3. Create an event; add rooms, sessions, and ticket types.
-4. Inspect the Bryntum Community schedule and EventMesh Insights charts.
-5. Try a recovery preview for a room disruption, review the ranked alternatives, and approve a suitable proposal.
-6. Create a ticket reservation and Sandbox PayPal order. Approve the payment using a **Sandbox buyer**, then check the capture, payment status, and ticket fulfillment results.
-7. Inspect webhook monitoring and refund proposals where corresponding Sandbox records exist.
+1. Enable local registration as described above.
+2. Visit **http://localhost:3000/register** to create a **local** organizer, then sign in at **http://localhost:3000/login**.
+3. Create an event, add rooms and sessions, and review the visual schedule.
+4. Trigger an unavailable-room scenario and inspect the recovery options and reasoning.
+5. Approve a recovery proposal and inspect the updated schedule.
+6. Create ticket types and a fresh reservation; if configured, test PayPal **Sandbox** checkout and verify the actual capture result.
 
-Actual menu labels and available actions depend on the current UI and seeded data. Use **fake attendee details** while demonstrating the workflow.
+**Local database and hosted database are separate.** A local organizer account is not automatically available on the hosted Render service; hosted judging should use the designated [demo credentials](#-demo-access--important-for-hackathon-judges).
 
-### 5. Verify the project
+### 5. Run checks
 
-From the **backend** directory:
+**Backend, from `backend/`:**
 
 ```powershell
 .\.venv\Scripts\python.exe -m unittest discover -s . -p "test_*.py"
 ```
 
-From the **frontend** directory:
+**Frontend, from `frontend/`:**
 
 ```powershell
 npx tsc --noEmit
+npm run build
 ```
 
-**Most recent local validation during preparation:** 94 backend unit tests passed, the frontend TypeScript check passed, and organizer login/dashboard worked locally. These results are a development checkpoint, not a claim of a completed production security audit or external PayPal integration certification.
+For older SQLite databases created before organizer ownership was introduced, consult the repository's `migrate_event_ownership.py` and back up the database first. Do not blindly run ownership migration on a multi-organizer database.
 
-## Demo and judging access
+---
 
-**Current demo method:** reproduce the working app with the instructions above. **A publicly hosted deployment is not required by the hackathon rules** when a working build can be installed and run from the repository.
+## ☁️ Deploy on Render
 
-To test the end-to-end PayPal flow, reviewers need their own free PayPal Sandbox app credentials and Sandbox buyer (or separately arranged judge-only test access). **Do not publish real credentials or session tokens in this README.** If private demo access is arranged, provide the instructions and credentials through an appropriate private channel in the submission process.
+The hosted demonstration uses **two independent Render web services** from the same GitHub repository. Both should deploy the **tested `main` branch**.
 
-### Suggested video walkthrough (under 3 minutes)
+### Backend service — FastAPI
 
-| Time | What to show |
+| Setting | Value |
 | --- | --- |
-| 0:00–0:20 | The problem: an unavailable event room disrupts an active schedule. |
-| 0:20–0:55 | Event dashboard, rooms/sessions, Bryntum Community schedule, and Insights. |
-| 0:55–1:40 | Recovery suggestions, explanations, and organizer approval. |
-| 1:40–2:30 | PayPal Sandbox order approval, capture verification, and ticket status. |
-| 2:30–2:50 | Refund/reconciliation view, security/ownership, and project impact. |
+| Service name | `eventmesh-backend` |
+| Root directory | `backend` |
+| Language/runtime | Python |
+| Build command | `pip install -r requirements.txt` |
+| Start command | `python -m uvicorn main:app --host 0.0.0.0 --port $PORT` |
+| Health URL | `https://eventmesh-backend.onrender.com/health` |
 
-Record an actual **running application**, use only media you have permission to use, upload the video as **public on YouTube**, and insert its URL near the top of this README and in Devpost.
+Configure **private Render environment variables**:
 
-## Render hosted demo — opt-in deployment
+```dotenv
+EVENTMESH_ORGANIZER_KEY=YOUR_PRIVATE_SHARED_SERVER_SECRET
+EVENTMESH_BOOTSTRAP_ORGANIZER_EMAIL=YOUR_DESIGNATED_DEMO_EMAIL
+EVENTMESH_BOOTSTRAP_ORGANIZER_PASSWORD=YOUR_DESIGNATED_DEMO_PASSWORD
+EVENTMESH_ENABLE_REGISTRATION=false
+EVENTMESH_PUBLIC_FRONTEND_URL=https://eventmesh-frontend-a1c5.onrender.com
+PAYPAL_CLIENT_ID=YOUR_SANDBOX_CLIENT_ID
+PAYPAL_CLIENT_SECRET=YOUR_SANDBOX_CLIENT_SECRET
+PAYPAL_WEBHOOK_ID=YOUR_ACTUAL_SANDBOX_WEBHOOK_ID_IF_CONFIGURED
+```
 
-This setup is a **restricted Sandbox demonstration**, not a production-grade, durable service. Both services connect to the public GitHub repository's `main` branch. Preserve the earlier local demo, and verify new code before putting a link in Devpost.
+The designated demo email and password above correspond to those displayed in the **Demo access** section. They are **demo-only**; the actual Render values must match for reliable re-creation after an empty-database startup. If the backend is already configured correctly, do not replace working values just to follow this document.
 
-### Backend: `eventmesh-backend`
+Without a persistent disk, leave `EVENTMESH_DB_PATH` unset for the temporary demonstration database. To preserve SQLite records, attach a disk and set it to `/var/data/events.db` as documented earlier.
 
-- **Render Web Service** from repository `saksham2806/eventmesh-ai`, root directory `backend`, Python 3.13.3.
-- Build: `pip install -r requirements.txt`
-- Start: `python -m uvicorn main:app --host 0.0.0.0 --port $PORT`
-- Keep `EVENTMESH_ORGANIZER_KEY` as a private random secret, matching the frontend's server secret.
-- Set `EVENTMESH_BOOTSTRAP_ORGANIZER_EMAIL` to a test-account email and `EVENTMESH_BOOTSTRAP_ORGANIZER_PASSWORD` to a unique strong password (12–128 characters). These are **private** Render environment variables. They create an organizer only when the database has no organizer accounts. **Never post the password publicly.**
-- Set `EVENTMESH_ENABLE_REGISTRATION=false` (or omit it). **Do not** enable public production registration; the frontend rejects production signups by design.
-- Set `EVENTMESH_PUBLIC_FRONTEND_URL=https://eventmesh-frontend-a1c5.onrender.com` for PayPal Sandbox redirect URLs. Set PayPal **Sandbox** `PAYPAL_CLIENT_ID` and `PAYPAL_CLIENT_SECRET` if payments will be tested. Never use Live keys.
-- **Render Free:** Leave `EVENTMESH_DB_PATH` unset. This uses temporary `backend/events.db`, which is erased on restarts/spin-downs/redeploys. The initial organizer can be recreated from the private bootstrap variables, but event/ticket/payment history **will not persist**.
-- **If upgrading to a paid persistent disk later:** Mount a disk at `/var/data`, set `EVENTMESH_DB_PATH=/var/data/events.db`, and redeploy. Every SQLite-using backend module now shares this setting. Confirm read/write access and backups before accepting payments.
+### Frontend service — Next.js
 
-### Frontend: `eventmesh-frontend`
+| Setting | Value |
+| --- | --- |
+| Service name | `eventmesh-frontend` |
+| Root directory | `frontend` |
+| Runtime | Node.js (Node 22 used in the documented Render setup) |
+| Build command | `npm install --no-audit --no-fund && npm run build` |
+| Start command | `npm run start -- --hostname 0.0.0.0 --port $PORT` |
+| Public URL | `https://eventmesh-frontend-a1c5.onrender.com` |
 
-- **Render Web Service** from the same repo, root directory `frontend`, Node 22.
-- Build: `npm install --no-audit --no-fund && npm run build` (temporary workaround for a cross-platform npm lockfile issue; fix the lockfile and return to `npm ci` when verified).
-- Start: `npm run start -- --hostname 0.0.0.0 --port $PORT`.
-- Private environment variables:
+The build command above matches the repository's documented hosted workaround for a cross-platform npm lockfile issue; prefer `npm ci` when the lockfile is validated.
+
+Set **private Render environment variables**:
 
 ```dotenv
 EVENTMESH_BACKEND_URL=https://eventmesh-backend.onrender.com
-EVENTMESH_ORGANIZER_KEY=THE_EXACT_SAME_SECRET_AS_RENDER_BACKEND
+EVENTMESH_ORGANIZER_KEY=THE_EXACT_SAME_SECRET_AS_THE_BACKEND
 EVENTMESH_ENABLE_PRODUCTION_BRIDGE=true
 EVENTMESH_PUBLIC_FRONTEND_URL=https://eventmesh-frontend-a1c5.onrender.com
+EVENTMESH_ENABLE_PRODUCTION_SANDBOX_CHECKOUT=true
 ```
 
-`EVENTMESH_ENABLE_PRODUCTION_BRIDGE=true` must be set **only** on a deployment you control, after checking server-side session validation, allowlisted API routes and the `EVENTMESH_BACKEND_URL` HTTPS origin. The backend and frontend keys may differ from local `.env` values, but the **two Render keys must match**.
+**Deployment cautions:**
 
-### Enable hosted PayPal Sandbox only after testing core organizer functions
+- Keep `EVENTMESH_ORGANIZER_KEY` identical on the two Render services; it is **not** the public demo password.
+- The production API bridge and Sandbox checkout flags are explicit opt-ins. Enable them only after validating the allowed routes, organizer-session checks, same-origin protections, and backend URL.
+- Keep the **original frontend domain** as `EVENTMESH_PUBLIC_FRONTEND_URL` for PayPal return/cancel URLs. A temporary PR preview with a different domain will not share the original site's login/checkout cookies.
+- Public organizer registration should remain disabled on the hosted demo. The bootstrap variables create a designated organizer **only if the database is empty of organizers**.
+- Credentials and PayPal keys belong in **Render Environment**, not source code.
 
-For an end-to-end PayPal Sandbox test, set `EVENTMESH_ENABLE_PRODUCTION_SANDBOX_CHECKOUT=true` on the **frontend** after verifying login, event creation, scheduling, and recovery. The backend uses `EVENTMESH_PUBLIC_FRONTEND_URL` for PayPal's fixed return/cancel URLs. The completion route requires an authenticated organizer session, matching signed checkout cookie and same-origin HTTPS request, and the backend re-verifies capture before issuing tickets.
+### About Render Free, Starter, and hackathon credits
 
-**Do not treat an approval redirect as successful payment.** Confirm `PAID`, `payment_verified=true`, and ticket count matching the reservation. If the capture result is uncertain, reconcile instead of retrying. Never expose real PayPal credentials or post demo-buyer passwords publicly. This integration has **not yet been validated end-to-end on Render**.
+- **Free:** Web services can sleep after 15 minutes of inactivity. The first request may take time to wake them.
+- **Paid Starter:** Prevents inactivity sleep; use paid compute for **both** frontend and backend if you require a continuously running review demo. Paid compute **does not** make local SQLite files persistent.
+- **Credits:** If promotional Render credits have been applied to your workspace, eligible charges may be offset by those credits. Track the remaining balance and any expiry in **Render → Billing**; credits are not a guarantee against charges beyond the available balance.
+- **Persistent disk:** Optional additional resource for permanent SQLite data; not required for a disposable hackathon demo. See the [Render docs](https://render.com/docs/disks).
 
-### Hosted smoke-test sequence
+### Publishing README changes without resetting demo data
 
-1. Check backend `https://eventmesh-backend.onrender.com/health` returns a healthy response.
-2. Open frontend `https://eventmesh-frontend-a1c5.onrender.com`; verify it reaches the login page. A `401 Authentication required` at `/api/auth/organizer/me` before login is expected.
-3. Sign in with the privately configured initial organizer credentials. Production public registration is intentionally unavailable.
-4. Create an event, two rooms and two sessions; check the Bryntum timeline and Insights. Confirm event creation does **not** fail with `no column named organizer_id`.
-5. Trigger room-unavailable recovery, review the ranked options, approve one and check the updated schedule.
-6. If PayPal Sandbox is configured, create a fresh reservation, pay with a Sandbox buyer, verify capture and ticket issuance. A simulator or direct URL open does **not** prove live webhook delivery.
-7. Because Render Free loses SQLite records, test a fresh start and confirm the demo organizer can log in again—but **do not claim that event/payment data survives**.
+If Render is configured for **automatic deployment on commits to `main`**, even a documentation-only push can trigger a redeploy and erase an ephemeral SQLite database. To update only this README **without initiating Render's automatic redeploy**, use Render's documented commit-message marker:
 
-**Judge access:** Arrange private credentials or a controlled demo account via the submission's appropriate private contact method. Do not paste any credentials into GitHub, YouTube, screenshots, or public Devpost text. If no private distribution is available, rely on the runnable local instructions and demo video for full reproduction.
+```bash
+git add README.md
+git commit -m "docs: improve hackathon README [skip render]"
+git push origin main
+```
 
-## Development safeguards and current limitations
+This marker skips an **automatic** Render deploy for that commit; it does not disable manual deploys or guarantee data durability. Always check the Render Events/Deploys page after pushing. See [Render's documentation on skipping auto-deploys](https://render.com/docs/deploys#skipping-an-auto-deploy).
 
-- **Sandbox only:** This is a hackathon prototype; no live PayPal processing is supported or claimed.
-- **Organizer authorization:** Backend routes use organizer-session and ownership checks. The frontend API bridge also validates sessions and restricts forwarded routes.
-- **Webhooks:** The receiver checks required signature headers and posts the event to PayPal for verification before storing it. Real Sandbox events, not PayPal simulator mock events, are required for that postback verification method.
-- **Duplicate/failure handling:** Capture preparation uses a database transaction and a PayPal idempotency request ID; uncertain outcomes require reconciliation. This reduces risk but is not a blanket guarantee against all network/concurrency failures.
-- **Production bridge:** The production API bridge is **disabled by default** and must be opted into only after verifying the exact backend origin, matching server-side organizer key, restricted routes, authenticated sessions, and HTTPS.
-- **Sandbox completion route:** Hosted Sandbox checkout requires an additional explicit opt-in and a fixed HTTPS return origin. No live-money checkout is supported.
-- **Signup:** Public production registration remains disabled until suitable rate limiting and account-verification controls exist. Render demo setup uses a private server-seeded organizer account instead.
-- **Persistence:** The local SQLite file is ignored by Git. Render Free loses SQLite data on spin-down/restart/redeploy; this patch can recreate only the initial demo organizer at restart, **not** preserve events, reservations or payments. A paid persistent disk or a database migration is required for durable judging data.
-- **Production hardening still required:** HTTPS, trusted-proxy cookie behavior, secret rotation, end-to-end access tests, monitoring, and deployment validation.
+---
 
-## Repository layout
+## 💳 PayPal Sandbox: payment, confirmation and refunds
+
+EventMesh integrates with **PayPal Sandbox REST APIs** to demonstrate the transaction lifecycle. **No real-money payments are part of this demonstration.**
+
+### Expected checkout lifecycle
+
+1. An authenticated organizer creates an event and ticket reservation.
+2. The backend creates a **PayPal Sandbox order** linked to the reservation.
+3. A separate PayPal **Sandbox buyer** approves the order.
+4. PayPal redirects to the **configured original frontend domain**.
+5. The organizer completes the confirmation/capture step when prompted.
+6. The backend verifies the PayPal order and capture outcome, amount, and matching reservation before marking payment complete.
+7. Tickets are issued only after payment is verified; uncertain outcomes should be reconciled rather than blindly retried.
+
+**A PayPal `CHECKOUT.ORDER.APPROVED` event or approval page is not proof of capture.** A successful reservation should report values such as:
+
+```json
+{
+  "reservation_status": "PAID",
+  "payment_verified": true,
+  "tickets_issued": 2,
+  "quantity": 2
+}
+```
+
+The ticket count is an example: the actual count must match the paid reservation quantity. The exact API payload may include other fields.
+
+### Monitoring and refunds
+
+- **Webhook dashboard:** https://eventmesh-frontend-a1c5.onrender.com/webhooks
+- **Webhook verification:** PayPal signature verification occurs server-side before an event is trusted and recorded.
+- **Refund workflow:** The application includes proposal, approval, Sandbox refund execution, and reconciliation mechanisms where corresponding captured Sandbox transactions exist.
+- **Reset warning:** If a deployment reset removes the local transaction record, the backend cannot infer that an old order was paid merely from its previous approval. Verify the actual PayPal provider state before retrying or refunding.
+
+### Why payment may return to the login screen in a preview
+
+PayPal return/cancel URLs depend on `EVENTMESH_PUBLIC_FRONTEND_URL`. If checkout begins at `eventmesh-frontend-pr-2.onrender.com` but redirects to `eventmesh-frontend-a1c5.onrender.com`, browser login and checkout cookies **do not cross domains**. For end-to-end payment demos, use the **original hosted URL throughout**; do not change a shared backend's return origin just to test a temporary preview.
+
+---
+
+## 🧭 Recommended judge walkthrough
+
+> **Approximate route:** Open the hosted application → sign in → create an event → examine schedule → preview recovery → approve a decision → test a Sandbox reservation and payment → inspect verification and webhook insights.
+
+1. **Launch:** Open the [live website](https://eventmesh-frontend-a1c5.onrender.com/).
+2. **Sign in:** Use the **highlighted demo email/password** above. A new organizer sign-up is not required.
+3. **Event operations:** Create a sample event and add a room, sessions, and ticket inventory.
+4. **See the plan:** Open the Bryntum schedule and explore Insights charts.
+5. **Simulate a disruption:** Mark a room unavailable and review explained recovery recommendations.
+6. **Approve:** Choose an alternative and observe how the schedule changes.
+7. **Reserve:** Create a new ticket reservation using fake attendee details.
+8. **Pay:** If using a PayPal Sandbox buyer, follow the approval **and** capture-confirmation steps. Never use a real PayPal buyer account.
+9. **Verify:** Check `PAID`, `payment_verified=true`, and the correct ticket quantity; inspect webhook history when Sandbox events are available.
+10. **Optional:** Explore the refund/reconciliation workflow for an eligible captured Sandbox payment.
+
+**If the demo database was reset:** Just sign in using the designated demo credentials again and create a fresh event. Previously entered data may no longer exist. The project video provides a repeatable walkthrough independent of any one temporary database snapshot.
+
+---
+
+## 🛠️ Troubleshooting
+
+| Symptom | Likely cause | Suggested check |
+| --- | --- | --- |
+| Site initially slow to load | Render Free cold start | Check whether **both** services use Starter for an always-on demo; otherwise allow startup time. |
+| `Authentication service unavailable` | Backend unreachable, proxy error, or startup failure | Check backend `/health`, frontend/server logs, the trusted backend URL, and matching integration key. |
+| Backend `/health` is healthy but login fails | Session, origin, demo account, or credentials issue | Check the login API status, `EVENTMESH_PUBLIC_FRONTEND_URL`, and bootstrap organizer environment variables. |
+| Organizer account disappeared | Ephemeral SQLite DB recreated | Ensure bootstrap demo credentials are configured; sign in again after initialization. |
+| Events, tickets, or history disappeared | Render ephemeral filesystem reset | Create fresh demo data or attach a persistent disk for durable storage. |
+| `401 Authentication required` when logged out | Expected absence of a session | Sign in at `/login`. |
+| `403 Invalid request origin` | Browser origin differs from configured frontend origin | Validate the exact original HTTPS frontend URL in the relevant service's environment. |
+| `502 Bad Gateway` | Backend startup, crash, proxy, or service error | Inspect Render service runtime logs and compute status; health alone is not a full app test. |
+| PayPal approval redirects to login | Payment returned to a different frontend hostname | Run hosted checkout on the original domain; don't reuse another domain's session. |
+| PayPal order exists but ticket not issued | Approval was not captured/verified or local state was lost | Check reservation/capture status; reconcile instead of repeating an uncertain charge. |
+| Local frontend cannot reach backend | `EVENTMESH_BACKEND_URL` wrong or FastAPI not running | Use `http://127.0.0.1:8000` locally and run both terminals. |
+
+---
+
+## 📂 Repository structure
 
 ```text
 eventmesh-ai/
-├── backend/                    # FastAPI endpoints, SQLite models, auth, tests
+├── backend/                       # FastAPI, authentication, persistence, PayPal, tests
 │   ├── main.py
 │   ├── organizer_auth.py
 │   ├── event_ownership.py
-│   ├── paypal_webhooks.py
+│   ├── checkout_api.py
 │   ├── paypal_capture.py
+│   ├── paypal_webhooks.py
 │   ├── ticket_fulfillment.py
+│   ├── requirements.txt
 │   └── .env.example
-├── frontend/                   # Next.js organizer dashboard
-│   ├── src/app/
-│   ├── src/components/
-│   │   ├── EventMeshBryntum.tsx
-│   │   └── EventMeshInsights.tsx
+├── frontend/                      # Next.js organizer workspace
+│   ├── src/
+│   │   ├── app/                   # Pages and server-side API routes
+│   │   └── components/            # Scheduler, insights, organizer UI
 │   └── .env.local.example
 ├── docs/
 │   └── THIRD_PARTY_LICENSE_INVENTORY.md
+├── eventmesh_paypal_preflight.py
+├── .gitignore
 ├── LICENSE
 └── README.md
 ```
 
-## Open source and third-party software
+---
 
-EventMesh AI's own contributed code is distributed under the **[MIT License](LICENSE)**, subject to the rights of its respective contributors. The project uses third-party libraries with their **own** license terms.
+## 🔒 Security, scope and known limitations
 
-- **Bryntum Scheduler Community** packages, not the commercial/trial Scheduler packages.
-- **Recharts** for analytics, not the commercial AG Studio/AG Grid Enterprise stack.
-- A dependency-license inventory is available at **[docs/THIRD_PARTY_LICENSE_INVENTORY.md](docs/THIRD_PARTY_LICENSE_INVENTORY.md)**. Verify any additional attribution/notice obligations for redistributed assets and dependencies.
+- **Sandbox-only payments.** Do not supply live PayPal keys or process actual money through this demonstration.
+- **Public demo credentials.** The published organizer email and password are intentionally low-trust reviewer credentials. Data created in that account must be treated as public and disposable.
+- **Production registration restricted.** One designated account is offered for judging, but a bootstrap account is not a general enforcement mechanism for lifetime single-account exclusivity.
+- **Temporary database.** Data can disappear without warning when Render replaces/restarts the backend; Starter compute does not prevent this.
+- **Secrets remain private.** Do not expose PayPal API secrets, shared integration keys, session cookies, or Sandbox buyer passwords in GitHub.
+- **Human approval.** Recovery recommendations are decision support; event changes require organizer selection.
+- **External AI disclosure.** State the exact AI provider/model in the hackathon submission only after verifying it is actively used.
+- **Production hardening needed.** A real deployment requires stronger authentication, durable storage, access controls, secrets rotation, monitoring, backup/restore, privacy safeguards, and payment auditability.
 
-PayPal and other third-party product names are the property of their respective owners. This project is an independent hackathon prototype and does not claim official endorsement.
+### Open-source components and license
+
+EventMesh AI is distributed under the repository's [MIT license](LICENSE). Third-party components retain their own licenses; see [third-party license inventory](docs/THIRD_PARTY_LICENSE_INVENTORY.md), including the Bryntum Community components.
+
+## 🙌 Hackathon acknowledgement
+
+Built as a **PayPal AI Hackathon 2026** submission to explore how event coordination, explainable recovery decisions, and **verified** PayPal Sandbox transactions can work together in a single practical organizer experience.
+
+**Project:** [EventMesh AI](https://github.com/saksham2806/eventmesh-ai) · **[Live demo](https://eventmesh-frontend-a1c5.onrender.com/)** · **[YouTube video](https://youtu.be/cm-nEzB0UDw?si=wlATPqXxb9vd-Gvy)** · **[Hackathon](https://paypalaihackathon.devpost.com/)**
+
+---
+
+<div align="center">
+
+### EventMesh AI — Predict. Prevent. Perfect.
+
+*Less operational chaos. More confident decisions. Payments you can verify.*
+
+</div>
