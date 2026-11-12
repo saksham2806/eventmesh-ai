@@ -1,6 +1,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getTrustedBackendOrigin } from "@/lib/trustedBackend";
+import { isTrustedRequestOrigin } from "@/lib/requestOrigin";
 
 const COOKIE = "eventmesh_organizer_session";
 const SESSION_SECONDS = 12 * 60 * 60;
@@ -91,7 +92,7 @@ export async function POST(
 
   if (!backend) return reply("Local auth unavailable", 403);
 
-  if (request.headers.get("origin") !== request.nextUrl.origin) {
+  if (!isTrustedRequestOrigin(request)) {
     return reply("Invalid request origin", 403);
   }
 

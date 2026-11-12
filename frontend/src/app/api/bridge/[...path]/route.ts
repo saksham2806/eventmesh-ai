@@ -5,6 +5,7 @@ import {
   signCheckoutSession,
 } from "@/lib/sandboxSession";
 import { getTrustedBackendOrigin } from "@/lib/trustedBackend";
+import { isTrustedRequestOrigin } from "@/lib/requestOrigin";
 
 // Organizer login session cookie.
 const ORGANIZER_COOKIE = "eventmesh_organizer_session";
@@ -145,7 +146,7 @@ async function bridge(
   // Prevent cross-origin POST requests.
   if (
     method === "POST" &&
-    request.headers.get("origin") !== request.nextUrl.origin
+    !isTrustedRequestOrigin(request)
   ) {
     return errorResponse("Invalid request origin", 403);
   }
@@ -275,7 +276,9 @@ if (!organizerToken) {
             {
               httpOnly: true,
               sameSite: "lax",
-              secure: request.nextUrl.protocol === "https:",
+              secure:
+                process.env.NODE_ENV === "production" ||
+                request.nextUrl.protocol === "https:",
               path: "/",
               maxAge: 40 * 60,
             }

@@ -5,6 +5,7 @@ import {
   verifyCheckoutSession,
 } from "@/lib/sandboxSession";
 import { getTrustedBackendOrigin } from "@/lib/trustedBackend";
+import { isTrustedRequestOrigin } from "@/lib/requestOrigin";
 
 
 type PaymentStatus = {
@@ -26,12 +27,9 @@ export async function POST(request: NextRequest) {
   // Hosted Sandbox checkout is opt-in, HTTPS-only, and scoped to
   // the exact configured public origin. It is never a live-money route.
   if (process.env.NODE_ENV === "production") {
-    const publicOrigin = process.env.EVENTMESH_PUBLIC_FRONTEND_URL;
     if (
       process.env.EVENTMESH_ENABLE_PRODUCTION_SANDBOX_CHECKOUT !== "true" ||
-      !publicOrigin ||
-      request.nextUrl.protocol !== "https:" ||
-      request.nextUrl.origin !== publicOrigin.replace(/\/$/, "")
+      !isTrustedRequestOrigin(request)
     ) {
       return reply("Hosted Sandbox checkout not enabled", 403);
     }
@@ -41,7 +39,7 @@ export async function POST(request: NextRequest) {
     return reply("Local Sandbox route disabled", 403);
   }
 
-  if (request.headers.get("origin") !== request.nextUrl.origin) {
+  if (!isTrustedRequestOrigin(request)) {
     return reply("Invalid request origin", 403);
   }
 
