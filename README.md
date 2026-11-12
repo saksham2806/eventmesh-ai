@@ -25,10 +25,6 @@
 | **Organizer login** | **https://eventmesh-frontend-a1c5.onrender.com/login** |
 | **YouTube project demo** | **https://youtu.be/cm-nEzB0UDw?si=wlATPqXxb9vd-Gvy** |
 | Source code | https://github.com/saksham2806/eventmesh-ai |
-| FastAPI health check | https://eventmesh-backend.onrender.com/health |
-| Hosted webhook monitoring | https://eventmesh-frontend-a1c5.onrender.com/webhooks |
-| PayPal AI Hackathon | https://paypalaihackathon.devpost.com/ |
-| PayPal Developer Sandbox | https://developer.paypal.com/dashboard/applications/sandbox |
 
 > **For reviewers:** Start with the [live website](https://eventmesh-frontend-a1c5.onrender.com/), sign in using the **demo organizer credentials** below, and follow the [guided walkthrough](#-recommended-judge-walkthrough). The YouTube video also demonstrates the project if the hosted environment is being redeployed.
 
